@@ -2,9 +2,14 @@
 export const IFRAME_ID = 'finicityConnectIframe';
 export const STYLES_ID = 'finicityConnectStyles';
 export const PLATFORM = 'web';
-// NOTE: popup window dimensions
+
+// NOTE: oauth popup window dimensions
 export const POPUP_WIDTH = 600;
 export const POPUP_HEIGHT = 600;
+
+// NOTE: connect popup window dimensions
+export const CONNECT_POPUP_WIDTH = 520;
+export const CONNECT_POPUP_HEIGHT = 720;
 
 // NOTE: available events
 export const ACK_EVENT = 'ack';

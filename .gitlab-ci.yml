@@ -17,6 +17,8 @@ dependencies:
 
 build:
   stage: build
+  before_script:
+    - sed -ri "s|\'PACKAGE_VERSION\'|\'$(node -p -e "require('./package.json').version")\'|" src/index.ts # replace PACKAGE_VERSION with package.json version
   script:
     - npm run build
   cache:

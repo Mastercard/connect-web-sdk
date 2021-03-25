@@ -1,8 +1,14 @@
-import { version } from '../package.json';
+import 'core-js/stable/url';
+import 'regenerator-runtime/runtime';
+
+const version = 'PACKAGE_VERSION';
+
 import {
   IFRAME_ID,
   POPUP_WIDTH,
   POPUP_HEIGHT,
+  CONNECT_POPUP_HEIGHT,
+  CONNECT_POPUP_WIDTH,
   ACK_EVENT,
   CANCEL_EVENT,
   URL_EVENT,
@@ -13,22 +19,24 @@ import {
   ROUTE_EVENT,
   USER_EVENT,
   PLATFORM,
-  STYLES_ID
+  STYLES_ID,
 } from './constants';
 
-let optionsObject;
-let onMessageFn;
-let connectUrl;
-let iframe;
-let metaEl;
+let evHandlers: ConnectEventHandlers;
+let onMessageFn: any;
+let connectUrl: string;
+let iframe: any;
+let metaEl: any;
+let targetWindow: Window;
+let connectOrigin: string;
 
 const defaultEventHandlers: ConnectEventHandlers = {
-  loaded: (event: any) => { },
-  done: (event: any) => { },
-  cancel: (event: any) => { },
-  error: (event: any) => { },
-  user: (event: any) => { },
-  route: (event: any) => { },
+  loaded: (event: any) => {},
+  done: (event: any) => {},
+  cancel: (event: any) => {},
+  error: (event: any) => {},
+  user: (event: any) => {},
+  route: (event: any) => {},
 };
 
 export interface ConnectEventHandlers {
@@ -66,10 +74,22 @@ const defaultPopupOptions = {
   width: POPUP_WIDTH,
   height: POPUP_HEIGHT,
   top: window.top.outerHeight / 2 + window.top.screenY - POPUP_HEIGHT / 2,
-  left: window.top.outerWidth / 2 + window.top.screenX - POPUP_WIDTH / 2
+  left: window.top.outerWidth / 2 + window.top.screenX - POPUP_WIDTH / 2,
+};
+
+interface FinicityConnect {
+  destroy: () => void;
+  launch: (
+    url: string,
+    eventHandlers: ConnectEventHandlers,
+    options?: ConnectOptions
+  ) => Window | null;
+  initPostMessage: (options: ConnectOptions) => void;
+  openPopupWindow: (url: string) => void;
+  postMessage: (event: any) => void;
 }
 
-export const FinicityConnect = {
+export const FinicityConnect: FinicityConnect = {
   destroy() {
     if (iframe && iframe.parentNode) {
       iframe.parentNode.removeChild(iframe);
@@ -79,6 +99,10 @@ export const FinicityConnect = {
       metaEl.parentNode.removeChild(metaEl);
     }
 
+    if (!iframe && targetWindow) {
+      targetWindow.close();
+    }
+
     iframe = undefined;
     metaEl = undefined;
 
@@ -86,22 +110,31 @@ export const FinicityConnect = {
   },
 
   launch(
-    connectUrl: string,
+    url: string,
     eventHandlers: ConnectEventHandlers,
-    options: ConnectOptions
+    options: ConnectOptions = {}
   ) {
-    eventHandlers = { ...defaultEventHandlers, ...eventHandlers };
+    connectUrl = url;
+    evHandlers = { ...defaultEventHandlers, ...eventHandlers };
+    connectOrigin = new URL(connectUrl).origin;
+
     if (options.popup) {
       const popupOptions = { ...defaultPopupOptions, ...options.popupOptions };
       const popupWindow = window.open(
         connectUrl,
         'targetWindow',
-        `toolbar=${popupOptions.toolbar},location=${popupOptions.location},status=${popupOptions.status},menubar=${popupOptions.menubar},width=${popupOptions.width},height=${popupOptions.height},top=${popupOptions.top},left=${popupOptions.left}`
+        `toolbar=${popupOptions.toolbar},location=${popupOptions.location},status=${popupOptions.status},menubar=${popupOptions.menubar},width=${CONNECT_POPUP_WIDTH},height=${CONNECT_POPUP_HEIGHT},top=${popupOptions.top},left=${popupOptions.left}`
       );
-      popupWindow.onload = () => {
-        this.initPostMessage();
-        eventHandlers.loaded();
+
+      if (!popupWindow) {
+        evHandlers.error({ rason: 'error', code: 1403 });
+      } else {
+        targetWindow = popupWindow;
+        this.initPostMessage(options);
+        evHandlers.loaded();
       }
+
+      return popupWindow;
     } else {
       if (iframe && iframe.parentNode) {
         throw new Error(
@@ -130,61 +163,69 @@ export const FinicityConnect = {
       }
 
       // NOTE: attach to selector if specified
-      const parentEl = !!options.selector ? document.querySelector(options.selector) : document.body;
+      const parentEl = !!options.selector
+        ? document.querySelector(options.selector)
+        : document.body;
       if (parentEl) {
         parentEl.appendChild(iframe);
       } else {
-        console.warn(`Couldn't find any elements matching "${options.selector}", appending "iframe" to "body" instead.`);
+        console.warn(
+          `Couldn't find any elements matching "${options.selector}", appending "iframe" to "body" instead.`
+        );
         document.body.appendChild(iframe);
       }
-
-      connectUrl = new URL(connectUrl).origin;
 
       let hasLoaded = false;
       iframe.onload = () => {
         if (!hasLoaded) {
-          this.initPostMessage(!!options.selector);
-          eventHandlers.loaded();
+          targetWindow = iframe.contentWindow;
+          this.initPostMessage(options);
+          evHandlers.loaded();
           hasLoaded = true;
         }
       };
     }
   },
 
-  initPostMessage(customContainer?: boolean) {
+  initPostMessage(options: ConnectOptions) {
     // NOTE: ping connect until it responds
-    const intervalId = setInterval(postMessage, 1000, {
-      type: PING_EVENT,
-      selector: customContainer,
-      sdkVersion: version,
-      platform: PLATFORM
-    });
+    const intervalId = setInterval(
+      () =>
+        this.postMessage({
+          type: PING_EVENT,
+          selector: options.selector,
+          sdkVersion: version,
+          platform: `${PLATFORM}-${options.popup ? 'popup' : 'iframe'}`,
+        }),
+      1000
+    );
 
     onMessageFn = (event: any) => {
       const payload = event.data.data;
       const eventType = event.data.type;
       // NOTE: make sure it's Connect and not a bad actor
-      if (event.origin === connectUrl) {
+      if (event.origin === connectOrigin) {
         if (eventType === ACK_EVENT) {
           clearInterval(intervalId);
         } else if (eventType === URL_EVENT) {
           this.openPopupWindow(event.data.url);
         } else if (eventType === DONE_EVENT) {
-          optionsObject.success(payload);
+          evHandlers.done(payload);
           this.destroy();
         } else if (eventType === CANCEL_EVENT) {
-          optionsObject.cancel(payload);
+          evHandlers.cancel(payload);
           this.destroy();
         } else if (eventType === ERROR_EVENT) {
-          optionsObject.error(payload);
+          evHandlers.error(payload);
           this.destroy();
         } else if (eventType === ROUTE_EVENT) {
-          optionsObject.route(event.data);
+          evHandlers.route(event.data);
         } else if (eventType === USER_EVENT) {
-          optionsObject.user(event.data);
+          evHandlers.user(event.data);
         }
       }
     };
+
     window.addEventListener('message', onMessageFn);
   },
 
@@ -207,33 +248,33 @@ export const FinicityConnect = {
         clearInterval(intervalId);
         this.postMessage({
           type: WINDOW_EVENT,
-          closed: true
+          closed: true,
         });
       }
     }, 1000);
   },
 
   postMessage(data: any) {
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.postMessage(data, connectUrl);
-    }
-  },
-
-  applyStyles() {
-    if (!document.getElementById(STYLES_ID)) {
-      const style = document.createElement('style');
-      style.id = STYLES_ID
-      style.type = 'text/css';
-      style.innerHTML = `#${IFRAME_ID}{
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 10;
-          background: rgba(0,0,0,0.8);
-         }`;
-      document.getElementsByTagName('head')[0].appendChild(style);
+    if (targetWindow) {
+      targetWindow.postMessage(data, connectUrl);
     }
   },
 };
+
+(function applyStyles() {
+  if (!document.getElementById(STYLES_ID)) {
+    const style = document.createElement('style');
+    style.id = STYLES_ID;
+    style.type = 'text/css';
+    style.innerHTML = `#${IFRAME_ID}{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        background: rgba(0,0,0,0.8);
+       }`;
+    document.getElementsByTagName('head')[0].appendChild(style);
+  }
+})();
