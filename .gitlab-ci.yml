@@ -1,0 +1,35 @@
+before_script:
+  - npm install
+
+dependencies:
+  stage: install
+  script:
+    - npm ci
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+
+build:
+  stage: build
+  script:
+    - npm run build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull # https://docs.gitlab.com/ee/ci/yaml/#cachepolicy
+  artifacts:
+    paths:
+      - dist/
+
+publish:
+  stage: deploy
+  when: manual
+  only:
+    - master
+  script:
+    - npm publish --registry=http://registry.fini.city:8081/repository/npm-private/
+  artifacts:
+    paths:
+      - dist/
