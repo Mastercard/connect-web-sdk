@@ -1,5 +1,8 @@
-before_script:
-  - npm install
+stages:
+  - install
+  - build
+  - test
+  - publish
 
 dependencies:
   stage: install
@@ -24,7 +27,7 @@ build:
       - dist/
 
 publish:
-  stage: deploy
+  stage: publish
   when: manual
   only:
     - master
