@@ -2,6 +2,7 @@
 export const IFRAME_ID = 'finicityConnectIframe';
 export const STYLES_ID = 'finicityConnectStyles';
 export const PLATFORM = 'web';
+export const CONNECT_SDK_VERSION = 'PACKAGE_VERSION';
 
 // NOTE: oauth popup window dimensions
 export const POPUP_WIDTH = 600;

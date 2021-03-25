@@ -1,8 +1,6 @@
 import 'core-js/stable/url';
 import 'regenerator-runtime/runtime';
 
-const version = 'PACKAGE_VERSION';
-
 import {
   IFRAME_ID,
   POPUP_WIDTH,
@@ -20,6 +18,7 @@ import {
   USER_EVENT,
   PLATFORM,
   STYLES_ID,
+  CONNECT_SDK_VERSION
 } from './constants';
 
 let evHandlers: ConnectEventHandlers;
@@ -194,7 +193,7 @@ export const FinicityConnect: FinicityConnect = {
         this.postMessage({
           type: PING_EVENT,
           selector: options.selector,
-          sdkVersion: version,
+          sdkVersion: CONNECT_SDK_VERSION,
           platform: `${PLATFORM}-${options.popup ? 'popup' : 'iframe'}`,
         }),
       1000
