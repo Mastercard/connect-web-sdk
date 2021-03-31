@@ -5,6 +5,8 @@
 
 # files
 /dist
+README.md
+CHANGELOG.md
 
 # dependencies
 /node_modules
