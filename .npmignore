@@ -1,2 +1,4 @@
 node_modules
 .gitlab-ci.yml
+.DS_Store
+coverage/

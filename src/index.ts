@@ -29,13 +29,10 @@ let metaEl: any;
 let targetWindow: Window;
 let connectOrigin: string;
 
-const defaultEventHandlers: ConnectEventHandlers = {
-  loaded: (event: any) => {},
-  done: (event: any) => {},
-  cancel: (event: any) => {},
-  error: (event: any) => {},
-  user: (event: any) => {},
-  route: (event: any) => {},
+const defaultEventHandlers = {
+  loaded: (event: any) => { },
+  user: (event: any) => { },
+  route: (event: any) => { },
 };
 
 export interface ConnectEventHandlers {
@@ -174,14 +171,10 @@ export const FinicityConnect: FinicityConnect = {
         document.body.appendChild(iframe);
       }
 
-      let hasLoaded = false;
       iframe.onload = () => {
-        if (!hasLoaded) {
-          targetWindow = iframe.contentWindow;
-          this.initPostMessage(options);
-          evHandlers.loaded();
-          hasLoaded = true;
-        }
+        targetWindow = iframe.contentWindow;
+        this.initPostMessage(options);
+        evHandlers.loaded();
       };
     }
   },
@@ -265,15 +258,15 @@ export const FinicityConnect: FinicityConnect = {
     const style = document.createElement('style');
     style.id = STYLES_ID;
     style.type = 'text/css';
-    style.innerHTML = `#${IFRAME_ID}{
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10;
-        background: rgba(0,0,0,0.8);
-       }`;
+    style.innerHTML = `#${IFRAME_ID} {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: rgba(0,0,0,0.8);
+    }`;
     document.getElementsByTagName('head')[0].appendChild(style);
   }
 })();
