@@ -1,9 +1,17 @@
 image: node:alpine
 
+variables:
+    DEPLOY_IMAGE: "$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID"
+    SCAN_IMAGE: "$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID-scan"
+    SONAR_PROJECT_KEY: connect-web-sdk
+    SONAR_TOKEN: $SONAR_LOGIN
+    SONAR_URL: $SONAR_HOST_URL
+
 stages:
   - install
   - build
   - test
+  - scan
   - publish
 
 dependencies:
@@ -14,6 +22,31 @@ dependencies:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - node_modules/
+
+test:
+  stage: test
+  script:
+    - npm run test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    when: always  
+    paths:
+      - coverage
+    expire_in: 1 days
+
+prettier:
+  stage: test
+  script:
+    - npm run prettier-check
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull
 
 build:
   stage: build
@@ -29,6 +62,46 @@ build:
   artifacts:
     paths:
       - dist/
+
+checkmarx:manual:
+  stage: scan
+  image:
+    name: dcr.fini.city/images/cx-flow/master:latest
+  when: manual
+  before_script: []
+  script:
+    - java -noverify
+      -XX:+UnlockExperimentalVMOptions
+      -XX:+UseContainerSupport
+      -Djava.security.egd=file:/dev/./urandom
+      -jar /usr/src/app/cx-flow.jar
+      --spring.config.location=/usr/src/app/config.yml
+      --scan
+      --app=${CI_PROJECT_PATH_SLUG}
+      --cx-project=${CI_PROJECT_PATH_SLUG}
+      --repo-url=${CI_PROJECT_URL}/
+      --branch=${CI_COMMIT_REF_NAME}
+      --f=.
+  cache: {}
+  dependencies: []
+
+checkmarx:
+  extends: checkmarx:manual
+  only:
+    - master
+  when: on_success
+
+sonarqube:
+  stage: scan
+  image: ciricihq/gitlab-sonar-scanner
+  variables:
+    SONAR_ANALYSIS_MODE: publish
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /^WIP.*/
+  script:
+    - gitlab-sonar-scanner
+  allow_failure: true 
 
 publish:
   stage: publish

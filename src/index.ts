@@ -18,7 +18,7 @@ import {
   USER_EVENT,
   PLATFORM,
   STYLES_ID,
-  CONNECT_SDK_VERSION
+  CONNECT_SDK_VERSION,
 } from './constants';
 
 let evHandlers: ConnectEventHandlers;
@@ -30,9 +30,9 @@ let targetWindow: Window;
 let connectOrigin: string;
 
 const defaultEventHandlers = {
-  loaded: (event: any) => { },
-  user: (event: any) => { },
-  route: (event: any) => { },
+  loaded: (event: any) => {},
+  user: (event: any) => {},
+  route: (event: any) => {},
 };
 
 export interface ConnectEventHandlers {
