@@ -80,9 +80,9 @@ describe('FinicityConnect', () => {
       );
       jest.spyOn(window, 'removeEventListener');
       FinicityConnect.launch(url, {
-        done: () => {},
-        error: () => {},
-        cancel: () => {},
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
       });
       FinicityConnect.destroy();
 
@@ -97,9 +97,9 @@ describe('FinicityConnect', () => {
       };
       jest.spyOn(window, 'removeEventListener');
       FinicityConnect.launch(url, {
-        done: () => {},
-        error: () => {},
-        cancel: () => {},
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
       });
       FinicityConnect.destroy();
       expect(window.removeEventListener).toHaveBeenCalledWith(
@@ -112,7 +112,7 @@ describe('FinicityConnect', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
       FinicityConnect.launch(
         url,
-        { done: () => {}, error: () => {}, cancel: () => {} },
+        { onDone: () => {}, onError: () => {}, onCancel: () => {} },
         { popup: true }
       );
       FinicityConnect.destroy();
@@ -123,11 +123,11 @@ describe('FinicityConnect', () => {
   describe('launch', () => {
     test('should handle popup scenario with default options', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
-      const loaded = jest.fn();
+      const onLoad = jest.fn();
       spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
       FinicityConnect.launch(
         url,
-        { done: () => {}, error: () => {}, cancel: () => {}, loaded },
+        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         { popup: true }
       );
       expect(window.open).toHaveBeenCalledWith(
@@ -135,7 +135,7 @@ describe('FinicityConnect', () => {
         'targetWindow',
         `toolbar=${defaultPopupOptions.toolbar},location=${defaultPopupOptions.location},status=${defaultPopupOptions.status},menubar=${defaultPopupOptions.menubar},width=${CONNECT_POPUP_WIDTH},height=${CONNECT_POPUP_HEIGHT},top=${defaultPopupOptions.top},left=${defaultPopupOptions.left}`
       );
-      expect(loaded).toHaveBeenCalled();
+      expect(onLoad).toHaveBeenCalled();
       expect(FinicityConnect.initPostMessage).toHaveBeenCalled();
     });
 
@@ -151,14 +151,14 @@ describe('FinicityConnect', () => {
         top: 200,
         left: 200,
       };
-      const loaded = jest.fn();
+      const onLoad = jest.fn();
       spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
       FinicityConnect.launch(
         url,
-        { done: () => {}, error: () => {}, cancel: () => {}, loaded },
+        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         { popup: true, popupOptions }
       );
-      expect(loaded).toHaveBeenCalled();
+      expect(onLoad).toHaveBeenCalled();
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
@@ -169,14 +169,14 @@ describe('FinicityConnect', () => {
 
     test('should return error event if popup failed to open', () => {
       spyOn(window, 'open').and.returnValue(undefined);
-      const error = jest.fn();
+      const onError = jest.fn();
       FinicityConnect.launch(
         url,
-        { done: () => {}, error, cancel: () => {} },
+        { onDone: () => {}, onError, onCancel: () => {} },
         { popup: true }
       );
       expect(window.open).toHaveBeenCalled();
-      expect(error).toHaveBeenCalledWith({ rason: 'error', code: 1403 });
+      expect(onError).toHaveBeenCalledWith({ reason: 'error', code: 1403 });
     });
 
     test('should handle iframe scenario with no overrides', () => {
@@ -194,13 +194,13 @@ describe('FinicityConnect', () => {
       spyOn(window.document, 'createElement').and.callFake((element) =>
         element === 'iframe' ? iframeStub : metaStub
       );
-      const loaded = jest.fn();
+      const onLoad = jest.fn();
       spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
       FinicityConnect.launch(url, {
-        done: () => {},
-        error: () => {},
-        cancel: () => {},
-        loaded,
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
+        onLoad,
       });
       expect(document.querySelectorAll).toHaveBeenCalledWith(
         'meta[name="viewport"]'
@@ -223,7 +223,7 @@ describe('FinicityConnect', () => {
       expect(document.body.appendChild).toHaveBeenCalledWith(iframeStub);
       iframeStub.onload();
       expect(FinicityConnect.initPostMessage).toHaveBeenCalledWith({});
-      expect(loaded).toHaveBeenCalled();
+      expect(onLoad).toHaveBeenCalled();
     });
 
     test('should handle iframe scenario with custom overlay and container', () => {
@@ -244,11 +244,11 @@ describe('FinicityConnect', () => {
       spyOn(window.document, 'createElement').and.callFake((element) =>
         element === 'iframe' ? iframeStub : metaStub
       );
-      const loaded = jest.fn();
+      const onLoad = jest.fn();
       spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
       FinicityConnect.launch(
         url,
-        { done: () => {}, error: () => {}, cancel: () => {}, loaded },
+        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         options
       );
 
@@ -262,7 +262,7 @@ describe('FinicityConnect', () => {
 
       iframeStub.onload();
       expect(FinicityConnect.initPostMessage).toHaveBeenCalledWith(options);
-      expect(loaded).toHaveBeenCalled();
+      expect(onLoad).toHaveBeenCalled();
     });
 
     test("should log warning and append iframe to body if selector doesn't return an element", () => {
@@ -283,11 +283,11 @@ describe('FinicityConnect', () => {
       spyOn(window.document, 'createElement').and.callFake((element) =>
         element === 'iframe' ? iframeStub : metaStub
       );
-      const loaded = jest.fn();
+      const onLoad = jest.fn();
       spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
       FinicityConnect.launch(
         url,
-        { done: () => {}, error: () => {}, cancel: () => {}, loaded },
+        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         options
       );
 
@@ -300,15 +300,15 @@ describe('FinicityConnect', () => {
 
     test('should throw error if launch is called again before calling destroy', () => {
       FinicityConnect.launch(url, {
-        done: () => {},
-        error: () => {},
-        cancel: () => {},
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
       });
       try {
         FinicityConnect.launch(url, {
-          done: () => {},
-          error: () => {},
-          cancel: () => {},
+          onDone: () => {},
+          onError: () => {},
+          onCancel: () => {},
         });
       } catch (e) {
         expect(e.message).toBe(
@@ -348,9 +348,9 @@ describe('FinicityConnect', () => {
         (eventType, eh) => (eventHandler = eh)
       );
       const eventHandlers = {
-        done: jest.fn(),
-        error: jest.fn(),
-        cancel: jest.fn(),
+        onDone: jest.fn(),
+        onError: jest.fn(),
+        onCancel: jest.fn(),
       };
       FinicityConnect.launch(url, eventHandlers);
       FinicityConnect.initPostMessage({ selector: '#container' });
@@ -372,26 +372,26 @@ describe('FinicityConnect', () => {
 
       const payload = { test: true };
       eventHandler({ origin: url, data: { type: DONE_EVENT, data: payload } });
-      expect(eventHandlers.done).toHaveBeenCalledWith(payload);
+      expect(eventHandlers.onDone).toHaveBeenCalledWith(payload);
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(1);
 
       eventHandler({
         origin: url,
         data: { type: CANCEL_EVENT, data: payload },
       });
-      expect(eventHandlers.cancel).toHaveBeenCalledWith(payload);
+      expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(2);
 
       eventHandler({ origin: url, data: { type: ERROR_EVENT, data: payload } });
-      expect(eventHandlers.cancel).toHaveBeenCalledWith(payload);
+      expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
 
       eventHandler({ origin: url, data: { type: ROUTE_EVENT, data: payload } });
-      expect(eventHandlers.cancel).toHaveBeenCalledWith(payload);
+      expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
 
       eventHandler({ origin: url, data: { type: USER_EVENT, data: payload } });
-      expect(eventHandlers.cancel).toHaveBeenCalledWith(payload);
+      expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
     });
   });
@@ -436,6 +436,7 @@ describe('FinicityConnect', () => {
       expect(FinicityConnect.postMessage).toHaveBeenCalledWith({
         type: WINDOW_EVENT,
         closed: true,
+        blocked: false,
       });
     });
   });
@@ -457,9 +458,9 @@ describe('FinicityConnect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       FinicityConnect.launch(url, {
-        done: () => {},
-        error: () => {},
-        cancel: () => {},
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
       });
       iframeStub.onload();
       const data = { test: true };
@@ -474,7 +475,7 @@ describe('FinicityConnect', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
       FinicityConnect.launch(
         url,
-        { done: () => {}, error: () => {}, cancel: () => {} },
+        { onDone: () => {}, onError: () => {}, onCancel: () => {} },
         { popup: true }
       );
 

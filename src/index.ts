@@ -29,19 +29,52 @@ let metaEl: any;
 let targetWindow: Window;
 let connectOrigin: string;
 
-const defaultEventHandlers = {
-  loaded: (event: any) => {},
-  user: (event: any) => {},
-  route: (event: any) => {},
+export interface ConnectEventHandlers {
+  onDone: (event: ConnectDoneEvent) => void;
+  onCancel: (event: ConnectCancelEvent) => void;
+  onError: (event: ConnectErrorEvent) => void;
+  onRoute?: (event: ConnectRouteEvent) => void;
+  onUser?: (event: any) => void;
+  onLoad?: () => void;
+}
+
+const defaultEventHandlers: any = {
+  onLoad: () => {},
+  onUser: (event: any) => {},
+  onRoute: (event: ConnectRouteEvent) => {},
 };
 
-export interface ConnectEventHandlers {
-  loaded?: Function;
-  done: Function;
-  cancel: Function;
-  error: Function;
-  user?: Function;
-  route?: Function;
+export interface FinicityConnectProps {
+  connectUrl: string;
+  eventHandlers: ConnectEventHandlers;
+  linkingUri?: string;
+}
+
+export interface ConnectCancelEvent {
+  code: number;
+  reason: string;
+}
+
+export interface ConnectErrorEvent {
+  code: number;
+  reason: string;
+}
+
+export interface ConnectDoneEvent {
+  code: number;
+  reason: string;
+  reportData: [
+    {
+      portfolioId: string;
+      type: string;
+      reportId: string;
+    }
+  ];
+}
+
+export interface ConnectRouteEvent {
+  screen: string;
+  params: any;
 }
 
 export interface ConnectOptions {
@@ -79,7 +112,7 @@ interface FinicityConnect {
     url: string,
     eventHandlers: ConnectEventHandlers,
     options?: ConnectOptions
-  ) => Window | null;
+  ) => Window | null | void;
   initPostMessage: (options: ConnectOptions) => void;
   openPopupWindow: (url: string) => void;
   postMessage: (event: any) => void;
@@ -123,11 +156,11 @@ export const FinicityConnect: FinicityConnect = {
       );
 
       if (!popupWindow) {
-        evHandlers.error({ rason: 'error', code: 1403 });
+        evHandlers.onError({ reason: 'error', code: 1403 });
       } else {
         targetWindow = popupWindow;
         this.initPostMessage(options);
-        evHandlers.loaded();
+        evHandlers.onLoad && evHandlers.onLoad();
       }
 
       return popupWindow;
@@ -174,8 +207,10 @@ export const FinicityConnect: FinicityConnect = {
       iframe.onload = () => {
         targetWindow = iframe.contentWindow;
         this.initPostMessage(options);
-        evHandlers.loaded();
+        evHandlers.onLoad && evHandlers.onLoad();
       };
+
+      return null;
     }
   },
 
@@ -202,18 +237,18 @@ export const FinicityConnect: FinicityConnect = {
         } else if (eventType === URL_EVENT) {
           this.openPopupWindow(event.data.url);
         } else if (eventType === DONE_EVENT) {
-          evHandlers.done(payload);
+          evHandlers.onDone(payload);
           this.destroy();
         } else if (eventType === CANCEL_EVENT) {
-          evHandlers.cancel(payload);
+          evHandlers.onCancel(payload);
           this.destroy();
         } else if (eventType === ERROR_EVENT) {
-          evHandlers.error(payload);
+          evHandlers.onError(payload);
           this.destroy();
         } else if (eventType === ROUTE_EVENT) {
-          evHandlers.route(event.data);
+          evHandlers.onRoute && evHandlers.onRoute(payload);
         } else if (eventType === USER_EVENT) {
-          evHandlers.user(event.data);
+          evHandlers.onUser && evHandlers.onUser(payload);
         }
       }
     };
@@ -231,19 +266,28 @@ export const FinicityConnect: FinicityConnect = {
       'targetWindow',
       `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${top},left=${left}`
     );
-    popupWindow.focus();
 
-    const intervalId = setInterval(() => {
-      // clear itself if window no longer exists or has been closed
-      if (popupWindow.closed) {
-        // window closed, notify connect
-        clearInterval(intervalId);
-        this.postMessage({
-          type: WINDOW_EVENT,
-          closed: true,
-        });
-      }
-    }, 1000);
+    if (popupWindow) {
+      popupWindow.focus();
+      const intervalId = setInterval(() => {
+        // clear itself if window no longer exists or has been closed
+        if (popupWindow.closed) {
+          // window closed, notify connect
+          clearInterval(intervalId);
+          this.postMessage({
+            type: WINDOW_EVENT,
+            closed: true,
+            blocked: false,
+          });
+        }
+      }, 1000);
+    } else {
+      this.postMessage({
+        type: WINDOW_EVENT,
+        closed: true,
+        blocked: true,
+      });
+    }
   },
 
   postMessage(data: any) {

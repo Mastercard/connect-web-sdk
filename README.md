@@ -10,18 +10,18 @@ npm install @finicity/connect-web-sdk
 ## Usage
 
 ```typescript
-import { FinicityConnect } from '@finicity/connect-web-sdk';
+import { FinicityConnect,  } from '@finicity/connect-web-sdk';
 
 export class AppComponent {
   
   constructor() {
     FinicityConnect.launch('CONNECT_URL', {
-      done: (event) => console.log('Done event', event),
-      cancel: (event) => console.log('Cancel event', event),
-      error: (event) => console.log('Error event', event),
-      user: (event) => console.log('User event', event),
-      route: (event) => console.log('Route event', event),
-      loaded: (event) => console.log('Loaded event', event)
+      onDone: (event) => console.log('Done event', event),
+      onCancel: (event) => console.log('Cancel event', event),
+      onError: (event) => console.log('Error event', event),
+      onUser: (event) => console.log('User event', event),
+      onRoute: (event) => console.log('Route event', event),
+      onLoad: (event) => console.log('Loaded event', event)
     });
   }
 }
