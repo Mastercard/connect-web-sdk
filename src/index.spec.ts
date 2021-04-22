@@ -21,14 +21,12 @@ import {
 } from './constants';
 
 const defaultPopupOptions = {
-  toolbar: 'no',
-  location: 'no',
-  status: 'no',
-  menubar: 'no',
-  width: POPUP_WIDTH,
-  height: POPUP_HEIGHT,
-  top: window.top.outerHeight / 2 + window.top.screenY - POPUP_HEIGHT / 2,
-  left: window.top.outerWidth / 2 + window.top.screenX - POPUP_WIDTH / 2,
+  width: CONNECT_POPUP_HEIGHT,
+  height: CONNECT_POPUP_WIDTH,
+  top:
+    window.top.outerHeight / 2 + window.top.screenY - CONNECT_POPUP_HEIGHT / 2,
+  left:
+    window.top.outerWidth / 2 + window.top.screenX - CONNECT_POPUP_WIDTH / 2,
 };
 
 const url = 'http://test.com';
@@ -133,7 +131,7 @@ describe('FinicityConnect', () => {
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
-        `toolbar=${defaultPopupOptions.toolbar},location=${defaultPopupOptions.location},status=${defaultPopupOptions.status},menubar=${defaultPopupOptions.menubar},width=${CONNECT_POPUP_WIDTH},height=${CONNECT_POPUP_HEIGHT},top=${defaultPopupOptions.top},left=${defaultPopupOptions.left}`
+        `toolbar=no,location=no,status=no,menubar=no,width=720,height=520,top=24,left=252`
       );
       expect(onLoad).toHaveBeenCalled();
       expect(FinicityConnect.initPostMessage).toHaveBeenCalled();
@@ -142,10 +140,6 @@ describe('FinicityConnect', () => {
     test('should handle popup scenario with specified options', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
       const popupOptions = {
-        toolbar: 'yes',
-        location: 'yes',
-        status: 'yes',
-        menubar: 'yes',
         width: 100,
         height: 100,
         top: 200,
@@ -162,7 +156,7 @@ describe('FinicityConnect', () => {
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
-        `toolbar=${popupOptions.toolbar},location=${popupOptions.location},status=${popupOptions.status},menubar=${popupOptions.menubar},width=${CONNECT_POPUP_WIDTH},height=${CONNECT_POPUP_HEIGHT},top=${popupOptions.top},left=${popupOptions.left}`
+        `toolbar=no,location=no,status=no,menubar=no,width=${popupOptions.width},height=${popupOptions.height},top=${popupOptions.top},left=${popupOptions.left}`
       );
       expect(FinicityConnect.initPostMessage).toHaveBeenCalled();
     });
@@ -218,7 +212,6 @@ describe('FinicityConnect', () => {
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('id', IFRAME_ID);
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('frameborder', '0');
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('scrolling', 'no');
-      // expect(iframeStub.setAttribute).toHaveBeenCalledWith('style', 'background: gray;');
 
       expect(document.body.appendChild).toHaveBeenCalledWith(iframeStub);
       iframeStub.onload();
@@ -394,6 +387,26 @@ describe('FinicityConnect', () => {
       expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
     });
+
+    test('should call attach postMessage event handler and ping Connect indefinitely for popup scenario', () => {
+      let eventHandler;
+      spyOn(window, 'open').and.callFake(() => mockWindow);
+      spyOn(window, 'addEventListener').and.callFake(
+        (eventType, eh) => (eventHandler = eh)
+      );
+      const eventHandlers = {
+        onDone: jest.fn(),
+        onError: jest.fn(),
+        onCancel: jest.fn(),
+      };
+      FinicityConnect.launch(url, eventHandlers, { popup: true });
+      FinicityConnect.initPostMessage({ popup: true });
+
+      expect(window.addEventListener).toHaveBeenCalled();
+      spyOn(window, 'clearInterval');
+      eventHandler({ origin: url, data: { type: ACK_EVENT } });
+      expect(window.clearInterval).not.toHaveBeenCalled();
+    });
   });
 
   describe('openPopupWindow', () => {
@@ -407,7 +420,7 @@ describe('FinicityConnect', () => {
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
-        `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${defaultPopupOptions.top},left=${defaultPopupOptions.left}`
+        `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=84,left=212`
       );
       expect(mockWindow.focus).toHaveBeenCalled();
       expect(window.setInterval).toHaveBeenCalled();
@@ -426,7 +439,7 @@ describe('FinicityConnect', () => {
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
-        `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${defaultPopupOptions.top},left=${defaultPopupOptions.left}`
+        `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=84,left=212`
       );
       expect(mockWindow.focus).toHaveBeenCalled();
       expect(window.setInterval).toHaveBeenCalled();
@@ -437,6 +450,24 @@ describe('FinicityConnect', () => {
         type: WINDOW_EVENT,
         closed: true,
         blocked: false,
+      });
+    });
+
+    test('should let Connect know if the popup was blocked', () => {
+      spyOn(window, 'open').and.callFake(() => undefined);
+      spyOn(FinicityConnect, 'postMessage').and.callFake(() => {});
+
+      FinicityConnect.openPopupWindow(url);
+      expect(window.open).toHaveBeenCalledWith(
+        url,
+        'targetWindow',
+        `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=84,left=212`
+      );
+      expect(mockWindow.focus).not.toHaveBeenCalled();
+      expect(FinicityConnect.postMessage).toHaveBeenCalledWith({
+        type: WINDOW_EVENT,
+        closed: true,
+        blocked: true,
       });
     });
   });

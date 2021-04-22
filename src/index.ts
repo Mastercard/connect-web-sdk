@@ -85,10 +85,6 @@ export interface ConnectOptions {
 }
 
 export interface PopupOptions {
-  toolbar?: string;
-  location?: string;
-  status?: string;
-  menubar?: string;
   width?: number;
   height?: number;
   top?: number;
@@ -100,10 +96,12 @@ const defaultPopupOptions = {
   location: 'no',
   status: 'no',
   menubar: 'no',
-  width: POPUP_WIDTH,
-  height: POPUP_HEIGHT,
-  top: window.top.outerHeight / 2 + window.top.screenY - POPUP_HEIGHT / 2,
-  left: window.top.outerWidth / 2 + window.top.screenX - POPUP_WIDTH / 2,
+  width: CONNECT_POPUP_HEIGHT,
+  height: CONNECT_POPUP_WIDTH,
+  top:
+    window.top.outerHeight / 2 + window.top.screenY - CONNECT_POPUP_HEIGHT / 2,
+  left:
+    window.top.outerWidth / 2 + window.top.screenX - CONNECT_POPUP_WIDTH / 2,
 };
 
 interface FinicityConnect {
@@ -152,13 +150,14 @@ export const FinicityConnect: FinicityConnect = {
       const popupWindow = window.open(
         connectUrl,
         'targetWindow',
-        `toolbar=${popupOptions.toolbar},location=${popupOptions.location},status=${popupOptions.status},menubar=${popupOptions.menubar},width=${CONNECT_POPUP_WIDTH},height=${CONNECT_POPUP_HEIGHT},top=${popupOptions.top},left=${popupOptions.left}`
+        `toolbar=${defaultPopupOptions.toolbar},location=${defaultPopupOptions.location},status=${defaultPopupOptions.status},menubar=${defaultPopupOptions.menubar},width=${popupOptions.width},height=${popupOptions.height},top=${popupOptions.top},left=${popupOptions.left}`
       );
 
       if (!popupWindow) {
         evHandlers.onError({ reason: 'error', code: 1403 });
       } else {
         targetWindow = popupWindow;
+        popupWindow.focus();
         this.initPostMessage(options);
         evHandlers.onLoad && evHandlers.onLoad();
       }
@@ -232,7 +231,9 @@ export const FinicityConnect: FinicityConnect = {
       const eventType = event.data.type;
       // NOTE: make sure it's Connect and not a bad actor
       if (event.origin === connectOrigin) {
-        if (eventType === ACK_EVENT) {
+        // NOTE: actively pinging connect while it's displayed in a popup allows us to recover the
+        // session if the user refreshes the popup
+        if (eventType === ACK_EVENT && !options.popup) {
           clearInterval(intervalId);
         } else if (eventType === URL_EVENT) {
           this.openPopupWindow(event.data.url);
