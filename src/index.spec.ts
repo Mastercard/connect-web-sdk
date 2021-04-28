@@ -258,6 +258,36 @@ describe('FinicityConnect', () => {
       expect(onLoad).toHaveBeenCalled();
     });
 
+    test('should handle iframe scenario with custom container as node', () => {
+      const mockContainer = { appendChild: jest.fn() } as any;
+      const options = { node: mockContainer };
+      const iframeStub: any = {
+        parentNode: { removeChild: jest.fn() },
+        setAttribute: jest.fn(),
+      };
+      const metaStub: any = {
+        parentNode: { removeChild: jest.fn() },
+        setAttribute: jest.fn(),
+      };
+      spyOn(document.head, 'appendChild').and.callFake(() => {});
+      spyOn(window.document, 'createElement').and.callFake((element) =>
+        element === 'iframe' ? iframeStub : metaStub
+      );
+      const onLoad = jest.fn();
+      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
+      FinicityConnect.launch(
+        url,
+        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
+        options
+      );
+
+      expect(mockContainer.appendChild).toHaveBeenCalledWith(iframeStub);
+
+      iframeStub.onload();
+      expect(FinicityConnect.initPostMessage).toHaveBeenCalledWith(options);
+      expect(onLoad).toHaveBeenCalled();
+    });
+
     test("should log warning and append iframe to body if selector doesn't return an element", () => {
       spyOn(console, 'warn').and.callThrough();
       const options = { selector: '#container' };
