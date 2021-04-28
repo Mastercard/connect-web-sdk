@@ -79,6 +79,7 @@ export interface ConnectRouteEvent {
 
 export interface ConnectOptions {
   selector?: string;
+  node?: Node;
   overlay?: string;
   popup?: boolean;
   popupOptions?: PopupOptions;
@@ -190,17 +191,21 @@ export const FinicityConnect: FinicityConnect = {
         iframe.setAttribute('style', `background: ${options.overlay};`);
       }
 
-      // NOTE: attach to selector if specified
-      const parentEl = !!options.selector
-        ? document.querySelector(options.selector)
-        : document.body;
-      if (parentEl) {
-        parentEl.appendChild(iframe);
+      if (options.node) {
+        options.node.appendChild(iframe);
       } else {
-        console.warn(
-          `Couldn't find any elements matching "${options.selector}", appending "iframe" to "body" instead.`
-        );
-        document.body.appendChild(iframe);
+        // NOTE: attach to selector if specified
+        const parentEl = !!options.selector
+          ? document.querySelector(options.selector)
+          : document.body;
+        if (parentEl) {
+          parentEl.appendChild(iframe);
+        } else {
+          console.warn(
+            `Couldn't find any elements matching "${options.selector}", appending "iframe" to "body" instead.`
+          );
+          document.body.appendChild(iframe);
+        }
       }
 
       iframe.onload = () => {
