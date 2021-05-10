@@ -18,6 +18,7 @@ import {
   PLATFORM,
   STYLES_ID,
   CONNECT_SDK_VERSION,
+  CLOSE_POPUP_EVENT,
 } from './constants';
 
 const defaultPopupOptions = {
@@ -367,6 +368,8 @@ describe('FinicityConnect', () => {
 
     test('should call attach postMessage event handler and send events as expected', () => {
       let eventHandler;
+      let popupMock = { close: jest.fn(), focus: jest.fn() };
+      spyOn(window, 'open').and.callFake(jest.fn().mockReturnValue(popupMock));
       spyOn(window, 'addEventListener').and.callFake(
         (eventType, eh) => (eventHandler = eh)
       );
@@ -383,7 +386,7 @@ describe('FinicityConnect', () => {
       eventHandler({ origin: url, data: { type: ACK_EVENT } });
       expect(window.clearInterval).toHaveBeenCalled();
 
-      spyOn(FinicityConnect, 'openPopupWindow');
+      spyOn(FinicityConnect, 'openPopupWindow').and.callThrough();
       spyOn(FinicityConnect, 'destroy');
       eventHandler({
         origin: url,
@@ -415,6 +418,13 @@ describe('FinicityConnect', () => {
 
       eventHandler({ origin: url, data: { type: USER_EVENT, data: payload } });
       expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
+      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
+
+      eventHandler({
+        origin: url,
+        data: { type: CLOSE_POPUP_EVENT, data: payload },
+      });
+      expect(popupMock.close).toHaveBeenCalled();
       expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
     });
 

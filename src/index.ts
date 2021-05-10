@@ -19,6 +19,7 @@ import {
   PLATFORM,
   STYLES_ID,
   CONNECT_SDK_VERSION,
+  CLOSE_POPUP_EVENT,
 } from './constants';
 
 let evHandlers: ConnectEventHandlers;
@@ -28,6 +29,7 @@ let iframe: any;
 let metaEl: any;
 let targetWindow: Window;
 let connectOrigin: string;
+let popupWindow: Window;
 
 export interface ConnectEventHandlers {
   onDone: (event: ConnectDoneEvent) => void;
@@ -255,6 +257,8 @@ export const FinicityConnect: FinicityConnect = {
           evHandlers.onRoute && evHandlers.onRoute(payload);
         } else if (eventType === USER_EVENT) {
           evHandlers.onUser && evHandlers.onUser(payload);
+        } else if (eventType === CLOSE_POPUP_EVENT) {
+          popupWindow && popupWindow.close();
         }
       }
     };
@@ -267,7 +271,7 @@ export const FinicityConnect: FinicityConnect = {
       window.top.outerHeight / 2 + window.top.screenY - POPUP_HEIGHT / 2;
     const left =
       window.top.outerWidth / 2 + window.top.screenX - POPUP_WIDTH / 2;
-    const popupWindow = window.open(
+    popupWindow = window.open(
       url,
       'targetWindow',
       `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${top},left=${left}`

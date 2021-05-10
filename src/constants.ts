@@ -22,3 +22,4 @@ export const PING_EVENT = 'ping';
 export const WINDOW_EVENT = 'window';
 export const ROUTE_EVENT = 'route';
 export const USER_EVENT = 'user';
+export const CLOSE_POPUP_EVENT = 'closePopup';
