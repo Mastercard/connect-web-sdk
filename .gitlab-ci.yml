@@ -62,6 +62,7 @@ build:
   artifacts:
     paths:
       - dist/
+    expire_in: 1 week
 
 checkmarx:manual:
   stage: scan
@@ -105,12 +106,14 @@ sonarqube:
 
 publish:
   stage: publish
-  when: manual
   only:
     - master
+  when: manual
   script:
-    - echo -e "registry=http://registry.fini.city:8081/repository/npm-private/\n//registry.fini.city:8081/repository/npm-private/:_authToken=${NPM_AUTH_TOKEN}" > ./.npmrc
-    - npm publish --registry=http://registry.fini.city:8081/repository/npm-private/
-  artifacts:
+    - echo -e "//registry.npmjs.org/:_authToken=${PUBLIC_NPM_TOKEN}" > ./.npmrc
+    - npm publish --access public
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - dist/
+      - node_modules/
+    policy: pull
