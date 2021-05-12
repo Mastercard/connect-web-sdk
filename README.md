@@ -94,6 +94,7 @@ For more detailed information on these events visit: [Connect Event Types](https
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | overlay     | Changes the overlay color where the Connect modal is displayed (only for iframe, defaults to rgba(0,0,0,0.8))                           |
 | selector    | CSS selector in which Connect should be embedded to. Connect will expand to fill the container's dimensions, the element's position must not be `static`. Connect will be displayed in a modal by default                                                                                                         | 
+| node        | Element in which Connect should be embedded to. Connect will expand to fill the container's dimensions, the element's position must not be `static`. Connect will be displayed in a modal by default                                                                                                         | 
 | popup       | Indicates if Connect should be displayed in a popup (defaults to false)                                                                 |
 | popupOptions| Used to configure the popup's width/height and positioning (top/left)                                                                   |
 
