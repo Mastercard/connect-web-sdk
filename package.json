@@ -1,6 +1,6 @@
 {
   "name": "@finicity/connect-web-sdk",
-  "version": "0.0.1-alpha.4",
+  "version": "1.0.0-rc.0",
   "description": "Finicity Connect Web SDK",
   "main": "dist/index.js",
   "types": "src/index.ts",
