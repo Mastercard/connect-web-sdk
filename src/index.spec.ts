@@ -15,7 +15,8 @@ import {
   WINDOW_EVENT,
   ROUTE_EVENT,
   USER_EVENT,
-  PLATFORM,
+  PLATFORM_IFRAME,
+  PLATFORM_POPUP,
   STYLES_ID,
   CONNECT_SDK_VERSION,
   CLOSE_POPUP_EVENT,
@@ -334,7 +335,7 @@ describe('FinicityConnect', () => {
           onError: () => {},
           onCancel: () => {},
         });
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe(
           'You must destroy the iframe before you can open a new one. Call "destroy()"'
         );
@@ -353,7 +354,7 @@ describe('FinicityConnect', () => {
         type: PING_EVENT,
         selector: '#container',
         sdkVersion: CONNECT_SDK_VERSION,
-        platform: `${PLATFORM}-iframe`,
+        platform: PLATFORM_IFRAME,
       });
 
       FinicityConnect.initPostMessage({ popup: true });
@@ -362,7 +363,7 @@ describe('FinicityConnect', () => {
         type: PING_EVENT,
         selector: undefined,
         sdkVersion: CONNECT_SDK_VERSION,
-        platform: `${PLATFORM}-popup`,
+        platform: PLATFORM_POPUP,
       });
     });
 

@@ -16,10 +16,11 @@ import {
   WINDOW_EVENT,
   ROUTE_EVENT,
   USER_EVENT,
-  PLATFORM,
   STYLES_ID,
   CONNECT_SDK_VERSION,
   CLOSE_POPUP_EVENT,
+  PLATFORM_POPUP,
+  PLATFORM_IFRAME,
 } from './constants';
 
 let evHandlers: ConnectEventHandlers;
@@ -29,7 +30,7 @@ let iframe: any;
 let metaEl: any;
 let targetWindow: Window;
 let connectOrigin: string;
-let popupWindow: Window;
+let popupWindow: Window | null;
 
 export interface ConnectEventHandlers {
   onDone: (event: ConnectDoneEvent) => void;
@@ -228,7 +229,7 @@ export const FinicityConnect: FinicityConnect = {
           type: PING_EVENT,
           selector: options.selector,
           sdkVersion: CONNECT_SDK_VERSION,
-          platform: `${PLATFORM}-${options.popup ? 'popup' : 'iframe'}`,
+          platform: `${options.popup ? PLATFORM_POPUP : PLATFORM_IFRAME}`,
         }),
       1000
     );
@@ -258,7 +259,7 @@ export const FinicityConnect: FinicityConnect = {
         } else if (eventType === USER_EVENT) {
           evHandlers.onUser && evHandlers.onUser(payload);
         } else if (eventType === CLOSE_POPUP_EVENT) {
-          popupWindow && popupWindow.close();
+          popupWindow?.close();
         }
       }
     };
@@ -281,7 +282,7 @@ export const FinicityConnect: FinicityConnect = {
       popupWindow.focus();
       const intervalId = setInterval(() => {
         // clear itself if window no longer exists or has been closed
-        if (popupWindow.closed) {
+        if (popupWindow?.closed) {
           // window closed, notify connect
           clearInterval(intervalId);
           this.postMessage({
@@ -301,9 +302,7 @@ export const FinicityConnect: FinicityConnect = {
   },
 
   postMessage(data: any) {
-    if (targetWindow) {
-      targetWindow.postMessage(data, connectUrl);
-    }
+    targetWindow?.postMessage(data, connectUrl);
   },
 };
 
