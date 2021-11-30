@@ -103,9 +103,11 @@ const defaultPopupOptions = {
   width: CONNECT_POPUP_HEIGHT,
   height: CONNECT_POPUP_WIDTH,
   top:
-    window.top.outerHeight / 2 + window.top.screenY - CONNECT_POPUP_HEIGHT / 2,
+    window.self.outerHeight / 2 +
+    window.self.screenY -
+    CONNECT_POPUP_HEIGHT / 2,
   left:
-    window.top.outerWidth / 2 + window.top.screenX - CONNECT_POPUP_WIDTH / 2,
+    window.self.outerWidth / 2 + window.self.screenX - CONNECT_POPUP_WIDTH / 2,
 };
 
 interface FinicityConnect {
@@ -269,9 +271,9 @@ export const FinicityConnect: FinicityConnect = {
 
   openPopupWindow(url: string) {
     const top =
-      window.top.outerHeight / 2 + window.top.screenY - POPUP_HEIGHT / 2;
+      window.self.outerHeight / 2 + window.self.screenY - POPUP_HEIGHT / 2;
     const left =
-      window.top.outerWidth / 2 + window.top.screenX - POPUP_WIDTH / 2;
+      window.self.outerWidth / 2 + window.self.screenX - POPUP_WIDTH / 2;
     popupWindow = window.open(
       url,
       'targetWindow',
