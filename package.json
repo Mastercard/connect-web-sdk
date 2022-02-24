@@ -30,5 +30,8 @@
     "typescript": "^4.2.3",
     "watch": "^1.0.2"
   },
+  "peerDependencies": {
+    "core-js": "^3.9.1"
+  },
   "dependencies": {}
 }
