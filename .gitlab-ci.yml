@@ -86,11 +86,11 @@ checkmarx:manual:
   cache: {}
   dependencies: []
 
-checkmarx:
-  extends: checkmarx:manual
-  only:
-    - master
-  when: on_success
+# checkmarx:
+#   extends: checkmarx:manual
+#   only:
+#     - master
+#   when: on_success
 
 sonarqube:
   stage: scan
