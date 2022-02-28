@@ -2,7 +2,7 @@
 
 ## Overview
 
-Finicity Connect React Native SDK provides an easy way for developers to integrate Finicity Connect into their web application. It supports both the embedded experience via iframe or through a popup window.
+The Finicity Connect Web SDK provides an easy way for developers to integrate Finicity Connect into their web application. It supports both the embedded experience via iframe or through a popup window.
 
 ## Installing
 

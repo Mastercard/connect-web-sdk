@@ -1,5 +1,4 @@
 import 'core-js/stable/url';
-import 'regenerator-runtime/runtime';
 
 import {
   IFRAME_ID,

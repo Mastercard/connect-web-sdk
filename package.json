@@ -1,6 +1,6 @@
 {
   "name": "@finicity/connect-web-sdk",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Finicity Connect Web SDK",
   "main": "dist/index.js",
   "types": "src/index.ts",
@@ -29,6 +29,9 @@
     "ts-jest": "^26.5.4",
     "typescript": "^4.2.3",
     "watch": "^1.0.2"
+  },
+  "peerDependencies": {
+    "core-js": "^3.9.1"
   },
   "dependencies": {}
 }
