@@ -291,7 +291,7 @@ describe('FinicityConnect', () => {
     });
 
     test("should log warning and append iframe to body if selector doesn't return an element", () => {
-      spyOn(console, 'warn').and.callThrough();
+      spyOn(console, 'warn').and.callFake(() => {});
       const options = { selector: '#container' };
       spyOn(document, 'querySelectorAll').and.callThrough();
       spyOn(document, 'querySelector').and.returnValue(undefined);
