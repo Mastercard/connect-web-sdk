@@ -1,8 +1,8 @@
-# Finicity Connect Web SDK
+# Mastercard Open Banking Connect Web SDK
 
 ## Overview
 
-The Finicity Connect Web SDK provides an easy way for developers to integrate Finicity Connect into their web application. It supports both the embedded experience via iframe or through a popup window.
+The Mastercard Open Banking Connect Web SDK provides an easy way for developers to integrate Mastercard Open Banking Connect into their web application. It supports both the embedded experience via iframe or through a popup window.
 
 ## Installing
 
@@ -14,7 +14,7 @@ npm install @finicity/connect-web-sdk
 
 ### Embedded Experience
 ```typescript
-import { FinicityConnect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from '@finicity/connect-web-sdk';
+import { MastercardConnect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from '@mastercard/connect-web-sdk';
 
 export class ConnectComponent {
   
@@ -32,7 +32,7 @@ export class ConnectComponent {
   };
 
   constructor() {
-    FinicityConnect.launch(
+    MastercardConnect.launch(
       'CONNECT_URL',
      this.connectEventHandlers,
      this.connectOptions);
@@ -42,7 +42,7 @@ export class ConnectComponent {
 
 ### Popup Experience
 ```typescript
-import { FinicityConnect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from '@finicity/connect-web-sdk';
+import { MastercardConnect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from '@finicity/connect-web-sdk';
 
 export class ConnectComponent {
   

@@ -1,4 +1,4 @@
-import { FinicityConnect } from './index';
+import { MastercardConnect } from './index';
 
 import {
   IFRAME_ID,
@@ -32,7 +32,7 @@ const defaultPopupOptions = {
 };
 
 const url = 'http://test.com';
-describe('FinicityConnect', () => {
+describe('MastercardConnect', () => {
   let mockWindow;
   beforeEach(() => {
     mockWindow = {
@@ -46,7 +46,7 @@ describe('FinicityConnect', () => {
 
   afterEach(() => {
     jest.resetAllMocks();
-    FinicityConnect.destroy();
+    MastercardConnect.destroy();
   });
 
   test('should apply iframe styles', () => {
@@ -79,12 +79,12 @@ describe('FinicityConnect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       jest.spyOn(window, 'removeEventListener');
-      FinicityConnect.launch(url, {
+      MastercardConnect.launch(url, {
         onDone: () => {},
         onError: () => {},
         onCancel: () => {},
       });
-      FinicityConnect.destroy();
+      MastercardConnect.destroy();
 
       expect(iframeStub.parentNode.removeChild).toHaveBeenCalled();
       expect(metaStub.parentNode.removeChild).toHaveBeenCalled();
@@ -96,12 +96,12 @@ describe('FinicityConnect', () => {
         onMessageFn = cb;
       };
       jest.spyOn(window, 'removeEventListener');
-      FinicityConnect.launch(url, {
+      MastercardConnect.launch(url, {
         onDone: () => {},
         onError: () => {},
         onCancel: () => {},
       });
-      FinicityConnect.destroy();
+      MastercardConnect.destroy();
       expect(window.removeEventListener).toHaveBeenCalledWith(
         'message',
         onMessageFn
@@ -110,12 +110,12 @@ describe('FinicityConnect', () => {
 
     test('should close popup window', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
-      FinicityConnect.launch(
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {} },
         { popup: true }
       );
-      FinicityConnect.destroy();
+      MastercardConnect.destroy();
       expect(mockWindow.close).toHaveBeenCalled();
     });
   });
@@ -124,8 +124,8 @@ describe('FinicityConnect', () => {
     test('should handle popup scenario with default options', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
       const onLoad = jest.fn();
-      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
-      FinicityConnect.launch(
+      spyOn(MastercardConnect, 'initPostMessage').and.callFake(() => {});
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         { popup: true }
@@ -136,7 +136,7 @@ describe('FinicityConnect', () => {
         `toolbar=no,location=no,status=no,menubar=no,width=720,height=520,top=24,left=252`
       );
       expect(onLoad).toHaveBeenCalled();
-      expect(FinicityConnect.initPostMessage).toHaveBeenCalled();
+      expect(MastercardConnect.initPostMessage).toHaveBeenCalled();
     });
 
     test('should handle popup scenario with specified options', () => {
@@ -148,8 +148,8 @@ describe('FinicityConnect', () => {
         left: 200,
       };
       const onLoad = jest.fn();
-      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
-      FinicityConnect.launch(
+      spyOn(MastercardConnect, 'initPostMessage').and.callFake(() => {});
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         { popup: true, popupOptions }
@@ -160,13 +160,13 @@ describe('FinicityConnect', () => {
         'targetWindow',
         `toolbar=no,location=no,status=no,menubar=no,width=${popupOptions.width},height=${popupOptions.height},top=${popupOptions.top},left=${popupOptions.left}`
       );
-      expect(FinicityConnect.initPostMessage).toHaveBeenCalled();
+      expect(MastercardConnect.initPostMessage).toHaveBeenCalled();
     });
 
     test('should return error event if popup failed to open', () => {
       spyOn(window, 'open').and.returnValue(undefined);
       const onError = jest.fn();
-      FinicityConnect.launch(
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError, onCancel: () => {} },
         { popup: true }
@@ -191,8 +191,8 @@ describe('FinicityConnect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
-      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
-      FinicityConnect.launch(url, {
+      spyOn(MastercardConnect, 'initPostMessage').and.callFake(() => {});
+      MastercardConnect.launch(url, {
         onDone: () => {},
         onError: () => {},
         onCancel: () => {},
@@ -217,7 +217,7 @@ describe('FinicityConnect', () => {
 
       expect(document.body.appendChild).toHaveBeenCalledWith(iframeStub);
       iframeStub.onload();
-      expect(FinicityConnect.initPostMessage).toHaveBeenCalledWith({});
+      expect(MastercardConnect.initPostMessage).toHaveBeenCalledWith({});
       expect(onLoad).toHaveBeenCalled();
     });
 
@@ -240,8 +240,8 @@ describe('FinicityConnect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
-      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
-      FinicityConnect.launch(
+      spyOn(MastercardConnect, 'initPostMessage').and.callFake(() => {});
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         options
@@ -256,7 +256,7 @@ describe('FinicityConnect', () => {
       expect(mockContainer.appendChild).toHaveBeenCalledWith(iframeStub);
 
       iframeStub.onload();
-      expect(FinicityConnect.initPostMessage).toHaveBeenCalledWith(options);
+      expect(MastercardConnect.initPostMessage).toHaveBeenCalledWith(options);
       expect(onLoad).toHaveBeenCalled();
     });
 
@@ -276,8 +276,8 @@ describe('FinicityConnect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
-      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
-      FinicityConnect.launch(
+      spyOn(MastercardConnect, 'initPostMessage').and.callFake(() => {});
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         options
@@ -286,7 +286,7 @@ describe('FinicityConnect', () => {
       expect(mockContainer.appendChild).toHaveBeenCalledWith(iframeStub);
 
       iframeStub.onload();
-      expect(FinicityConnect.initPostMessage).toHaveBeenCalledWith(options);
+      expect(MastercardConnect.initPostMessage).toHaveBeenCalledWith(options);
       expect(onLoad).toHaveBeenCalled();
     });
 
@@ -309,8 +309,8 @@ describe('FinicityConnect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
-      spyOn(FinicityConnect, 'initPostMessage').and.callFake(() => {});
-      FinicityConnect.launch(
+      spyOn(MastercardConnect, 'initPostMessage').and.callFake(() => {});
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
         options
@@ -324,13 +324,13 @@ describe('FinicityConnect', () => {
     });
 
     test('should throw error if launch is called again before calling destroy', () => {
-      FinicityConnect.launch(url, {
+      MastercardConnect.launch(url, {
         onDone: () => {},
         onError: () => {},
         onCancel: () => {},
       });
       try {
-        FinicityConnect.launch(url, {
+        MastercardConnect.launch(url, {
           onDone: () => {},
           onError: () => {},
           onCancel: () => {},
@@ -346,20 +346,20 @@ describe('FinicityConnect', () => {
   describe('initPostMessage', () => {
     test('should call postMessage every second with the expected parameters and attach postMessage event handler', () => {
       spyOn(window, 'setInterval').and.callThrough();
-      spyOn(FinicityConnect, 'postMessage').and.callFake(() => {});
+      spyOn(MastercardConnect, 'postMessage').and.callFake(() => {});
 
-      FinicityConnect.initPostMessage({ selector: '#container' });
+      MastercardConnect.initPostMessage({ selector: '#container' });
       jest.advanceTimersByTime(1100);
-      expect(FinicityConnect.postMessage).toHaveBeenCalledWith({
+      expect(MastercardConnect.postMessage).toHaveBeenCalledWith({
         type: PING_EVENT,
         selector: '#container',
         sdkVersion: CONNECT_SDK_VERSION,
         platform: PLATFORM_IFRAME,
       });
 
-      FinicityConnect.initPostMessage({ popup: true });
+      MastercardConnect.initPostMessage({ popup: true });
       jest.advanceTimersByTime(1100);
-      expect(FinicityConnect.postMessage).toHaveBeenCalledWith({
+      expect(MastercardConnect.postMessage).toHaveBeenCalledWith({
         type: PING_EVENT,
         selector: undefined,
         sdkVersion: CONNECT_SDK_VERSION,
@@ -379,54 +379,54 @@ describe('FinicityConnect', () => {
         onError: jest.fn(),
         onCancel: jest.fn(),
       };
-      FinicityConnect.launch(url, eventHandlers);
-      FinicityConnect.initPostMessage({ selector: '#container' });
+      MastercardConnect.launch(url, eventHandlers);
+      MastercardConnect.initPostMessage({ selector: '#container' });
 
       expect(window.addEventListener).toHaveBeenCalled();
       spyOn(window, 'clearInterval');
       eventHandler({ origin: url, data: { type: ACK_EVENT } });
       expect(window.clearInterval).toHaveBeenCalled();
 
-      spyOn(FinicityConnect, 'openPopupWindow').and.callThrough();
-      spyOn(FinicityConnect, 'destroy');
+      spyOn(MastercardConnect, 'openPopupWindow').and.callThrough();
+      spyOn(MastercardConnect, 'destroy');
       eventHandler({
         origin: url,
         data: { type: URL_EVENT, url: 'http://oauth.com' },
       });
-      expect(FinicityConnect.openPopupWindow).toHaveBeenCalledWith(
+      expect(MastercardConnect.openPopupWindow).toHaveBeenCalledWith(
         'http://oauth.com'
       );
 
       const payload = { test: true };
       eventHandler({ origin: url, data: { type: DONE_EVENT, data: payload } });
       expect(eventHandlers.onDone).toHaveBeenCalledWith(payload);
-      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(1);
+      expect(MastercardConnect.destroy).toHaveBeenCalledTimes(1);
 
       eventHandler({
         origin: url,
         data: { type: CANCEL_EVENT, data: payload },
       });
       expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
-      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(2);
+      expect(MastercardConnect.destroy).toHaveBeenCalledTimes(2);
 
       eventHandler({ origin: url, data: { type: ERROR_EVENT, data: payload } });
       expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
-      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
+      expect(MastercardConnect.destroy).toHaveBeenCalledTimes(3);
 
       eventHandler({ origin: url, data: { type: ROUTE_EVENT, data: payload } });
       expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
-      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
+      expect(MastercardConnect.destroy).toHaveBeenCalledTimes(3);
 
       eventHandler({ origin: url, data: { type: USER_EVENT, data: payload } });
       expect(eventHandlers.onCancel).toHaveBeenCalledWith(payload);
-      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
+      expect(MastercardConnect.destroy).toHaveBeenCalledTimes(3);
 
       eventHandler({
         origin: url,
         data: { type: CLOSE_POPUP_EVENT, data: payload },
       });
       expect(popupMock.close).toHaveBeenCalled();
-      expect(FinicityConnect.destroy).toHaveBeenCalledTimes(3);
+      expect(MastercardConnect.destroy).toHaveBeenCalledTimes(3);
     });
 
     test('should call attach postMessage event handler and ping Connect indefinitely for popup scenario', () => {
@@ -440,8 +440,8 @@ describe('FinicityConnect', () => {
         onError: jest.fn(),
         onCancel: jest.fn(),
       };
-      FinicityConnect.launch(url, eventHandlers, { popup: true });
-      FinicityConnect.initPostMessage({ popup: true });
+      MastercardConnect.launch(url, eventHandlers, { popup: true });
+      MastercardConnect.initPostMessage({ popup: true });
 
       expect(window.addEventListener).toHaveBeenCalled();
       spyOn(window, 'clearInterval');
@@ -455,9 +455,9 @@ describe('FinicityConnect', () => {
       spyOn(window, 'open').and.callFake(() => mockWindow);
       spyOn(window, 'setInterval');
       spyOn(window, 'clearInterval');
-      spyOn(FinicityConnect, 'postMessage').and.callFake(() => {});
+      spyOn(MastercardConnect, 'postMessage').and.callFake(() => {});
 
-      FinicityConnect.openPopupWindow(url);
+      MastercardConnect.openPopupWindow(url);
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
@@ -474,9 +474,9 @@ describe('FinicityConnect', () => {
       spyOn(window, 'open').and.callFake(() => mockWindow);
       spyOn(window, 'setInterval').and.callThrough();
       spyOn(window, 'clearInterval');
-      spyOn(FinicityConnect, 'postMessage').and.callFake(() => {});
+      spyOn(MastercardConnect, 'postMessage').and.callFake(() => {});
 
-      FinicityConnect.openPopupWindow(url);
+      MastercardConnect.openPopupWindow(url);
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
@@ -487,7 +487,7 @@ describe('FinicityConnect', () => {
 
       jest.advanceTimersByTime(1100);
       expect(window.clearInterval).toHaveBeenCalled();
-      expect(FinicityConnect.postMessage).toHaveBeenCalledWith({
+      expect(MastercardConnect.postMessage).toHaveBeenCalledWith({
         type: WINDOW_EVENT,
         closed: true,
         blocked: false,
@@ -496,16 +496,16 @@ describe('FinicityConnect', () => {
 
     test('should let Connect know if the popup was blocked', () => {
       spyOn(window, 'open').and.callFake(() => undefined);
-      spyOn(FinicityConnect, 'postMessage').and.callFake(() => {});
+      spyOn(MastercardConnect, 'postMessage').and.callFake(() => {});
 
-      FinicityConnect.openPopupWindow(url);
+      MastercardConnect.openPopupWindow(url);
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
         `toolbar=no,location=no,status=no,menubar=no,width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=84,left=212`
       );
       expect(mockWindow.focus).not.toHaveBeenCalled();
-      expect(FinicityConnect.postMessage).toHaveBeenCalledWith({
+      expect(MastercardConnect.postMessage).toHaveBeenCalledWith({
         type: WINDOW_EVENT,
         closed: true,
         blocked: true,
@@ -529,14 +529,14 @@ describe('FinicityConnect', () => {
       spyOn(window.document, 'createElement').and.callFake((element) =>
         element === 'iframe' ? iframeStub : metaStub
       );
-      FinicityConnect.launch(url, {
+      MastercardConnect.launch(url, {
         onDone: () => {},
         onError: () => {},
         onCancel: () => {},
       });
       iframeStub.onload();
       const data = { test: true };
-      FinicityConnect.postMessage(data);
+      MastercardConnect.postMessage(data);
       expect(iframeStub.contentWindow.postMessage).toHaveBeenCalledWith(
         data,
         url
@@ -545,14 +545,14 @@ describe('FinicityConnect', () => {
 
     test('should call postMessage on (popup)', () => {
       spyOn(window, 'open').and.returnValue(mockWindow);
-      FinicityConnect.launch(
+      MastercardConnect.launch(
         url,
         { onDone: () => {}, onError: () => {}, onCancel: () => {} },
         { popup: true }
       );
 
       const data = { test: true };
-      FinicityConnect.postMessage(data);
+      MastercardConnect.postMessage(data);
       expect(mockWindow.postMessage).toHaveBeenCalledWith(data, url);
     });
   });
