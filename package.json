@@ -1,7 +1,7 @@
 {
-  "name": "@mastercard/connect-web-sdk",
+  "name": "@mastercardopenbanking/connect-web-sdk",
   "version": "1.0.0-rc.4",
-  "description": "Mastercard Connect Web SDK",
+  "description": "Mastercard Open Banking Connect Web SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
