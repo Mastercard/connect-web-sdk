@@ -1,6 +1,6 @@
 // NOTE: Changing this value should be considered a version breaking change!!!
-export const IFRAME_ID = 'MastercardConnectIframe';
-export const STYLES_ID = 'MastercardConnectStyles';
+export const IFRAME_ID = 'ConnectIframe';
+export const STYLES_ID = 'ConnectStyles';
 export const PLATFORM_IFRAME = 'iframe';
 export const PLATFORM_POPUP = 'web';
 export const CONNECT_SDK_VERSION = 'PACKAGE_VERSION';
