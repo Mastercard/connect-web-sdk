@@ -393,9 +393,7 @@ describe('Connect', () => {
         origin: url,
         data: { type: URL_EVENT, url: 'http://oauth.com' },
       });
-      expect(Connect.openPopupWindow).toHaveBeenCalledWith(
-        'http://oauth.com'
-      );
+      expect(Connect.openPopupWindow).toHaveBeenCalledWith('http://oauth.com');
 
       const payload = { test: true };
       eventHandler({ origin: url, data: { type: DONE_EVENT, data: payload } });
