@@ -85,7 +85,7 @@ export class ConnectComponent {
 | onRoute    | Called with the user is navigating through the screens of the Connect application                                                       |
 | onUser     | Called when a user performs an action. User events provide visibility into what action a user could take within the Connect application |
 
-For more detailed information on these events visit: [Connect Event Types](https://docs.mastercard.com/connect-2-0-events-types/)
+For more detailed information on these events visit: [Connect Event Types](https://docs.finicity.com/connect-2-0-events-types/)
 
 
 ## Connect Options
