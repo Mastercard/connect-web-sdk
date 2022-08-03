@@ -7,14 +7,14 @@ The Mastercard Open Banking Connect Web SDK provides an easy way for developers 
 ## Installing
 
 ```bash
-npm install @mastercardopenbanking/connect-web-sdk
+npm install connect-web-sdk
 ```
 
 ## Usage
 
 ### Embedded Experience
 ```typescript
-import { Connect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from '@mastercardopenbanking/connect-web-sdk';
+import { Connect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from 'connect-web-sdk';
 
 export class ConnectComponent {
   
@@ -42,7 +42,7 @@ export class ConnectComponent {
 
 ### Popup Experience
 ```typescript
-import { Connect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from '@mastercardopenbanking/connect-web-sdk';
+import { Connect, ConnectEventHandlers, ConnectOptions, ConnectDoneEvent, ConnectCancelEvent, ConnectErrorEvent, ConnectRouteEvent } from 'connect-web-sdk';
 
 export class ConnectComponent {
   
@@ -84,8 +84,6 @@ export class ConnectComponent {
 | onError    | Called when an error occurs while the user is using the Connect                                                                         |
 | onRoute    | Called with the user is navigating through the screens of the Connect application                                                       |
 | onUser     | Called when a user performs an action. User events provide visibility into what action a user could take within the Connect application |
-
-For more detailed information on these events visit: [Connect Event Types](https://docs.finicity.com/connect-2-0-events-types/)
 
 
 ## Connect Options
