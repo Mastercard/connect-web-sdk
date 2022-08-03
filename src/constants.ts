@@ -1,6 +1,6 @@
 // NOTE: Changing this value should be considered a version breaking change!!!
-export const IFRAME_ID = 'finicityConnectIframe';
-export const STYLES_ID = 'finicityConnectStyles';
+export const IFRAME_ID = 'connectIframe';
+export const STYLES_ID = 'connectStyles';
 export const PLATFORM_IFRAME = 'iframe';
 export const PLATFORM_POPUP = 'web';
 export const CONNECT_SDK_VERSION = 'PACKAGE_VERSION';

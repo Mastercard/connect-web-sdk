@@ -46,7 +46,7 @@ const defaultEventHandlers: any = {
   onRoute: (event: ConnectRouteEvent) => {},
 };
 
-export interface FinicityConnectProps {
+export interface ConnectProps {
   connectUrl: string;
   eventHandlers: ConnectEventHandlers;
   linkingUri?: string;
@@ -109,7 +109,7 @@ const defaultPopupOptions = {
     window.self.outerWidth / 2 + window.self.screenX - CONNECT_POPUP_WIDTH / 2,
 };
 
-interface FinicityConnect {
+interface Connect {
   destroy: () => void;
   launch: (
     url: string,
@@ -121,7 +121,7 @@ interface FinicityConnect {
   postMessage: (event: any) => void;
 }
 
-export const FinicityConnect: FinicityConnect = {
+export const Connect: Connect = {
   destroy() {
     if (iframe && iframe.parentNode) {
       iframe.parentNode.removeChild(iframe);
