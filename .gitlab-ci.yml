@@ -110,7 +110,8 @@ publish:
     - master
   when: manual
   script:
-    - echo -e "//registry.npmjs.org/:_authToken=${PUBLIC_NPM_TOKEN}" > ./.npmrc
+    # https://www.npmjs.com/~mastercardapi
+    - echo -e "//registry.npmjs.org/:_authToken=${MASTERCARD_NPMJS_AUTOMATION_TOKEN}" > ./.npmrc
     - npm publish --access public
   cache:
     key: ${CI_COMMIT_REF_SLUG}
