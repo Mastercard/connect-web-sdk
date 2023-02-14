@@ -189,6 +189,8 @@ export const Connect: Connect = {
       iframe.setAttribute('id', IFRAME_ID);
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('scrolling', 'no');
+      iframe.setAttribute('aria-label', 'Launching Modal');
+      iframe.setAttribute('title', 'Launching Modal');
 
       // NOTE: update overlay
       if (options.overlay) {
