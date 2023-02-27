@@ -1,4 +1,4 @@
-image: node:14-alpine
+image: node:16-alpine
 
 variables:
     DEPLOY_IMAGE: "$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID"
@@ -120,15 +120,16 @@ publish:
       - node_modules/
     policy: pull
 
-
 publish:internal:
   stage: publish
   when: manual
   script:
-    - echo -e "registry=http://registry.fini.city:8081/repository/npm-private/\n//registry.fini.city:8081/repository/npm-private/:_authToken=${NPM_PRIVATE_AUTH_TOKEN}" > ./.npmrc
-    - npm publish --registry=http://registry.fini.city:8081/repository/npm-private/
+    - rm -rf ./.npmrc
+    - echo -e "//nexus.fini.city/repository/npm-private/:_authToken=${NPM_AUTH_TOKEN}" > ./.npmrc
+    - npm publish --registry=https://nexus.fini.city/repository/npm-private/
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - node_modules/
     policy: pull
+
