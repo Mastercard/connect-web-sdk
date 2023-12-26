@@ -94,21 +94,6 @@ export interface PopupOptions {
   left?: number;
 }
 
-const defaultPopupOptions = {
-  toolbar: 'no',
-  location: 'no',
-  status: 'no',
-  menubar: 'no',
-  width: CONNECT_POPUP_HEIGHT,
-  height: CONNECT_POPUP_WIDTH,
-  top:
-    window.self.outerHeight / 2 +
-    window.self.screenY -
-    CONNECT_POPUP_HEIGHT / 2,
-  left:
-    window.self.outerWidth / 2 + window.self.screenX - CONNECT_POPUP_WIDTH / 2,
-};
-
 interface Connect {
   destroy: () => void;
   launch: (
@@ -151,6 +136,22 @@ export const Connect: Connect = {
     connectOrigin = new URL(connectUrl).origin;
 
     if (options.popup) {
+      const defaultPopupOptions = {
+        toolbar: 'no',
+        location: 'no',
+        status: 'no',
+        menubar: 'no',
+        width: CONNECT_POPUP_HEIGHT,
+        height: CONNECT_POPUP_WIDTH,
+        top:
+          window.self.outerHeight / 2 +
+          window.self.screenY -
+          CONNECT_POPUP_HEIGHT / 2,
+        left:
+          window.self.outerWidth / 2 +
+          window.self.screenX -
+          CONNECT_POPUP_WIDTH / 2,
+      };
       const popupOptions = { ...defaultPopupOptions, ...options.popupOptions };
       const popupWindow = window.open(
         connectUrl,
@@ -310,7 +311,11 @@ export const Connect: Connect = {
 };
 
 (function applyStyles() {
-  if (!document.getElementById(STYLES_ID)) {
+  if (
+    typeof document !== 'undefined' &&
+    document &&
+    !document.getElementById(STYLES_ID)
+  ) {
     const style = document.createElement('style');
     style.id = STYLES_ID;
     style.type = 'text/css';
