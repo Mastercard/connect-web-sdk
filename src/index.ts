@@ -176,6 +176,22 @@ export const Connect: Connect = {
         );
       }
 
+      if (!document.getElementById(STYLES_ID)) {
+        const style = document.createElement('style');
+        style.id = STYLES_ID;
+        style.type = 'text/css';
+        style.innerHTML = `#${IFRAME_ID} {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+          background: rgba(0,0,0,0.8);
+        }`;
+        document.getElementsByTagName('head')[0].appendChild(style);
+      }
+
       let metaArray = document.querySelectorAll('meta[name="viewport"]');
       if (metaArray.length === 0) {
         metaEl = document.createElement('meta');
@@ -309,25 +325,3 @@ export const Connect: Connect = {
     targetWindow?.postMessage(data, connectUrl);
   },
 };
-
-(function applyStyles() {
-  if (
-    typeof document !== 'undefined' &&
-    document &&
-    !document.getElementById(STYLES_ID)
-  ) {
-    const style = document.createElement('style');
-    style.id = STYLES_ID;
-    style.type = 'text/css';
-    style.innerHTML = `#${IFRAME_ID} {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      background: rgba(0,0,0,0.8);
-    }`;
-    document.getElementsByTagName('head')[0].appendChild(style);
-  }
-})();

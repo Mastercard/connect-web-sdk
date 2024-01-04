@@ -50,17 +50,64 @@ describe('Connect', () => {
   });
 
   test('should apply iframe styles', () => {
+    Connect.launch(url, {
+      onDone: () => {},
+      onError: () => {},
+      onCancel: () => {},
+    });
     const styles = document.getElementById(STYLES_ID);
     expect(styles.id).toBe(STYLES_ID);
     expect(styles.innerHTML).toBe(`#${IFRAME_ID} {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      background: rgba(0,0,0,0.8);
-    }`);
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+          background: rgba(0,0,0,0.8);
+        }`);
+    Connect.destroy();
+  });
+
+  test('should apply iframe styles only once if not available on document', () => {
+    Connect.launch(url, {
+      onDone: () => {},
+      onError: () => {},
+      onCancel: () => {},
+    });
+    let styles = document.querySelectorAll(`[id=${STYLES_ID}]`);
+    expect(styles.length).toBe(1);
+    expect(styles[0].id).toBe(STYLES_ID);
+    expect(styles[0].innerHTML).toBe(`#${IFRAME_ID} {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+          background: rgba(0,0,0,0.8);
+        }`);
+    Connect.destroy();
+
+    // Re-enable launch
+    Connect.launch(url, {
+      onDone: () => {},
+      onError: () => {},
+      onCancel: () => {},
+    });
+    styles = document.querySelectorAll(`[id=${STYLES_ID}]`);
+    expect(styles.length).toBe(1);
+    expect(styles[0].id).toBe(STYLES_ID);
+    expect(styles[0].innerHTML).toBe(`#${IFRAME_ID} {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+          background: rgba(0,0,0,0.8);
+        }`);
+    Connect.destroy();
   });
 
   describe('destroy', () => {
