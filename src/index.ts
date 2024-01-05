@@ -94,21 +94,6 @@ export interface PopupOptions {
   left?: number;
 }
 
-const defaultPopupOptions = {
-  toolbar: 'no',
-  location: 'no',
-  status: 'no',
-  menubar: 'no',
-  width: CONNECT_POPUP_HEIGHT,
-  height: CONNECT_POPUP_WIDTH,
-  top:
-    window.self.outerHeight / 2 +
-    window.self.screenY -
-    CONNECT_POPUP_HEIGHT / 2,
-  left:
-    window.self.outerWidth / 2 + window.self.screenX - CONNECT_POPUP_WIDTH / 2,
-};
-
 interface Connect {
   destroy: () => void;
   launch: (
@@ -151,6 +136,22 @@ export const Connect: Connect = {
     connectOrigin = new URL(connectUrl).origin;
 
     if (options.popup) {
+      const defaultPopupOptions = {
+        toolbar: 'no',
+        location: 'no',
+        status: 'no',
+        menubar: 'no',
+        width: CONNECT_POPUP_HEIGHT,
+        height: CONNECT_POPUP_WIDTH,
+        top:
+          window.self.outerHeight / 2 +
+          window.self.screenY -
+          CONNECT_POPUP_HEIGHT / 2,
+        left:
+          window.self.outerWidth / 2 +
+          window.self.screenX -
+          CONNECT_POPUP_WIDTH / 2,
+      };
       const popupOptions = { ...defaultPopupOptions, ...options.popupOptions };
       const popupWindow = window.open(
         connectUrl,
@@ -173,6 +174,22 @@ export const Connect: Connect = {
         throw new Error(
           'You must destroy the iframe before you can open a new one. Call "destroy()"'
         );
+      }
+
+      if (!document.getElementById(STYLES_ID)) {
+        const style = document.createElement('style');
+        style.id = STYLES_ID;
+        style.type = 'text/css';
+        style.innerHTML = `#${IFRAME_ID} {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+          background: rgba(0,0,0,0.8);
+        }`;
+        document.getElementsByTagName('head')[0].appendChild(style);
       }
 
       let metaArray = document.querySelectorAll('meta[name="viewport"]');
@@ -308,21 +325,3 @@ export const Connect: Connect = {
     targetWindow?.postMessage(data, connectUrl);
   },
 };
-
-(function applyStyles() {
-  if (!document.getElementById(STYLES_ID)) {
-    const style = document.createElement('style');
-    style.id = STYLES_ID;
-    style.type = 'text/css';
-    style.innerHTML = `#${IFRAME_ID} {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      background: rgba(0,0,0,0.8);
-    }`;
-    document.getElementsByTagName('head')[0].appendChild(style);
-  }
-})();
