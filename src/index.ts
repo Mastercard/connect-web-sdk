@@ -85,6 +85,7 @@ export interface ConnectOptions {
   overlay?: string;
   popup?: boolean;
   popupOptions?: PopupOptions;
+  redirectUrl?: string;
 }
 
 export interface PopupOptions {
@@ -243,16 +244,17 @@ export const Connect: Connect = {
 
   initPostMessage(options: ConnectOptions) {
     // NOTE: ping connect until it responds
-    const intervalId = setInterval(
-      () =>
-        this.postMessage({
-          type: PING_EVENT,
-          selector: options.selector,
-          sdkVersion: CONNECT_SDK_VERSION,
-          platform: `${options.popup ? PLATFORM_POPUP : PLATFORM_IFRAME}`,
-        }),
-      1000
-    );
+    const intervalId = setInterval(() => {
+      const data = {
+        type: PING_EVENT,
+        selector: options.selector,
+        sdkVersion: CONNECT_SDK_VERSION,
+        platform: `${options.popup ? PLATFORM_POPUP : PLATFORM_IFRAME}`,
+      };
+      if (options.redirectUrl) data['redirectUrl'] = options.redirectUrl;
+
+      this.postMessage(data);
+    }, 1000);
 
     onMessageFn = (event: any) => {
       const payload = event.data.data;
