@@ -210,6 +210,34 @@ describe('Connect', () => {
       expect(Connect.initPostMessage).toHaveBeenCalled();
     });
 
+    test('should call PostMessage with redirectUrl parameter if passed as an option', () => {
+      spyOn(window, 'open').and.returnValue(mockWindow);
+      const popupOptions = {
+        width: 100,
+        height: 100,
+        top: 200,
+        left: 200,
+      };
+      const onLoad = jest.fn();
+      spyOn(Connect, 'initPostMessage').and.callFake(() => {});
+      Connect.launch(
+        url,
+        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
+        { popup: true, popupOptions, redirectUrl: 'https://test.com' }
+      );
+      expect(onLoad).toHaveBeenCalled();
+      expect(window.open).toHaveBeenCalledWith(
+        url,
+        'targetWindow',
+        `toolbar=no,location=no,status=no,menubar=no,width=${popupOptions.width},height=${popupOptions.height},top=${popupOptions.top},left=${popupOptions.left}`
+      );
+      expect(Connect.initPostMessage).toHaveBeenCalledWith({
+        popup: true,
+        popupOptions,
+        redirectUrl: 'https://test.com',
+      });
+    });
+
     test('should return error event if popup failed to open', () => {
       spyOn(window, 'open').and.returnValue(undefined);
       const onError = jest.fn();

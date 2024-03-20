@@ -95,4 +95,32 @@ export class ConnectComponent {
 | node        | Element in which Connect should be embedded to. Connect will expand to fill the container's dimensions, the element's position must not be `static`. Connect will be displayed in a modal by default                                                                                                         | 
 | popup       | Indicates if Connect should be displayed in a popup (defaults to false)                                                                 |
 | popupOptions| Used to configure the popup's width/height and positioning (top/left)                                                                   |
+| redirectUrl | The URL to redirect back to your mobile app after completing an FI’s OAuth flow (universal link on iOS, app link on Android). This parameter is only required for App to App.                                                                   |
 
+
+#### Configuring your redirectUrl
+In order to return control back to your application after a customer completes an FI’s OAuth flow, you must specify a redirectUrl value. This URL is used to redirect back to your mobile app after completing an FI’s OAuth flow (this should be a universal link on iOS or an app link on Android). Please note: This is only applicable for App to App
+
+Here is an example of a universal link redirectUrl within your code:
+```
+connectOptions: ConnectOptions = {
+  popup: true,
+  popupOptions: {
+    width: 600,
+    height: 600,
+    top: window.top.outerHeight / 2 + window.top.screenY - (600 / 2),
+    left: window.top.outerWidth / 2 + window.top.screenX - (600 / 2)
+  },
+  redirectUrl = "https://youruniversallink.com";
+};
+
+Connect.launch(connectURL, connectEventHandlers, connectOptions );
+```
+
+
+### Cleanup
+When the user of your application is finished with Connect you need to make sure to clean up the Connect instance by calling the destroy method. For example, if you have a ReactJS application you would call destroy in the unmount of your component.
+
+```TypeScript
+Connect.destroy()
+```
