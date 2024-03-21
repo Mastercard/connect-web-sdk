@@ -101,7 +101,7 @@ sonarqube:
     variables:
     - $CI_COMMIT_MESSAGE =~ /^WIP.*/
   script:
-    - gitlab-sonar-scanner
+    - sonar-scanner
   allow_failure: true 
 
 publish:
