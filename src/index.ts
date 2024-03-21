@@ -262,7 +262,7 @@ export const Connect: Connect = {
       // NOTE: make sure it's Connect and not a bad actor
       if (event.origin === connectOrigin) {
         // NOTE: actively pinging connect while it's displayed in a popup allows us to recover the
-        // session if the user refreshes the popup
+        // session if the user refreshes the popup window
         if (eventType === ACK_EVENT && !options.popup) {
           clearInterval(intervalId);
         } else if (eventType === URL_EVENT) {
