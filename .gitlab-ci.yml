@@ -94,7 +94,7 @@ checkmarx:manual:
 
 sonarqube:
   stage: scan
-  image: ciricihq/gitlab-sonar-scanner
+  image: sonarsource/sonar-scanner-cli:latest 
   variables:
     SONAR_ANALYSIS_MODE: publish
   except:
