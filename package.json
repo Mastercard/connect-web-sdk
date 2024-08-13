@@ -5,7 +5,7 @@
   "main": "dist/cjs/connect-web-sdk.min.js",
   "module": "dist/esm/connect-web-sdk.min.js",
   "browser": "dist/umd/connect-web-sdk.min.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "VERSION=$npm_package_version npm run build:types && npm run build:js",
     "build:types": "tsc --emitDeclarationOnly --project tsconfig.build.json",
@@ -19,7 +19,8 @@
     ".": {
       "import": "./dist/esm/connect-web-sdk.min.js",
       "require": "./dist/cjs/connect-web-sdk.min.js",
-      "umd": "./dist/umd/connect-web-sdk.min.js"
+      "umd": "./dist/umd/connect-web-sdk.min.js",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "author": "",
