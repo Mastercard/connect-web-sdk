@@ -1,6 +1,6 @@
 {
   "name": "connect-web-sdk",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Mastercard Open Banking Connect Web SDK",
   "main": "dist/cjs/connect-web-sdk.min.js",
   "module": "dist/esm/connect-web-sdk.min.js",
