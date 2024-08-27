@@ -61,6 +61,6 @@
     /* Advanced Options */
     // "declarationDir": "lib"                /* Output directory for generated declaration files. */
   },
-  "include": ["src", "src/**/*", "build/default_export.ts"],
+  "include": ["src", "src/**/*", "default_export.ts"],
   "exclude": ["node_modules", "**/*.spec.ts", "dist"]
 }

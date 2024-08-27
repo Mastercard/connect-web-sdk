@@ -7,6 +7,6 @@
  *
  *          This is a smart technique through which only umd/iife builds would use the default export in build process
  */
-import { Connect } from '../src/index';
+import { Connect } from './src/index';
 
 export default Connect;
