@@ -11,7 +11,7 @@ ___
         ```js
         // Either works
         const { Connect } = require("connect-web-sdk");
-        const { Connect } = require("connect-web-sdk/dist/cjs/index.js");
+        const { Connect } = require("connect-web-sdk/dist/mastercard-connect-cjs.min.js");
         ```
 
     - If you want to use a ESM build, try the following:
@@ -19,7 +19,14 @@ ___
         ```js 
         // Either works
         import { Connect } from 'connect-web-sdk';
-        import { Connect } from 'connect-web-sdk/dist/esm/index.js';
+        import { Connect } from 'connect-web-sdk/dist/mastercard-connect-esm.min.js';
+        ```
+
+        If you want to use the ESM build directly using script modules then you can try:
+
+        ```html 
+        // Attaches Connect object to global automatically
+        <script type="module" src="<path_to_web-sdk>/dist/mastercard-connect-esm.min.js"></script>
         ```
 
     - If you are using an index.html file where you want to use Connect directly using <script src=" ">, you can try the IIFE or UMD build.
@@ -27,7 +34,9 @@ ___
         - UMD (Universal Module Definition) attempts to offer compatibility with the most popular script loaders. The pattern has two parts: an IIFE where it is checked the module loader implemented by the user, and an anonymous function that creates the module
             ```html
             In index.html,
-            <script src="node_modules/connect-web-sdk/dist/umd/connect-web-sdk.js"></script>
+            <script src="node_modules/connect-web-sdk/dist/mastercard-connect-umd.min.js"></script>
+            
+            // Attaches Connect object to global automatically
             ```
 
 
@@ -35,7 +44,9 @@ ___
 
             ```html
             In index.html,
-            <script src="node_modules/connect-web-sdk/dist/iife/connect-web-sdk.js"></script>
+            <script src="node_modules/connect-web-sdk/dist/mastercard-connect-iife.min.js"></script>
+
+            // Attaches Connect object to global automatically
             ```
     
 
