@@ -1,9 +1,9 @@
 # Changelog
 
-### [1.2.0](https://www.npmjs.com/package/connect-web-sdk/v/1.2.0) (Latest)
+### [2.0.0](https://www.npmjs.com/package/connect-web-sdk/v/2.0.0) (Latest)
 ___
 ###### Features
-- Removed core-js and core-js-pure dependency and peer dependency from the project.
+- Removed core-js and core-js-pure dependency and peer dependency from the project
 - Enhanced the build process to generate four types of builds - Commonjs, ESM, IIFE and UMD builds. (Read more about builds: https://javascript.works-hub.com/learn/javascript-modules-358ee)
 
     - If you want to use a CommonJS build, try the following:
@@ -50,9 +50,9 @@ ___
             ```
     
 
-###### Considerations for upgrading to 1.2.0:
-- No breaking change from SDK end.
-- Since we are no longer supporting IE and older browsers, we removed the core-js and core-js-pure dependency and peer dependency.
+###### Considerations for upgrading to 2.0.0:
+- **Our package no longer requires CoreJS as a peer dependency**. This change may affect projects that relied on our package to provide CoreJS functionality. Since we are no longer supporting IE and older browsers, we removed the core-js peer dependency and core-js-pure dependency. If you were installing CoreJS solely because of our package's peer dependency, you may now remove it from your project if it's not needed for other purposes.
+- We now support multiple builds formats to support various use cases and environments [CommonJS (CJS), ECMAScript Modules (ESM), Immediately Invoked Function Expression (IIFE), Universal Module Definition (UMD)] You now have more flexibility in how you can use our package
 
 ### [1.1.0](https://www.npmjs.com/package/connect-web-sdk/v/1.1.0) (03/22/2024)
 ___
