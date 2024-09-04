@@ -1,3 +1,5 @@
+import 'core-js/stable/url';
+
 import {
   IFRAME_ID,
   POPUP_WIDTH,
