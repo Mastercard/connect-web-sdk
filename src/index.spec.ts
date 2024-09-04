@@ -26,11 +26,9 @@ const defaultPopupOptions = {
   width: CONNECT_POPUP_HEIGHT,
   height: CONNECT_POPUP_WIDTH,
   top:
-    window.top!.outerHeight / 2 +
-    window.top!.screenY -
-    CONNECT_POPUP_HEIGHT / 2,
+    window.top.outerHeight / 2 + window.top.screenY - CONNECT_POPUP_HEIGHT / 2,
   left:
-    window.top!.outerWidth / 2 + window.top!.screenX - CONNECT_POPUP_WIDTH / 2,
+    window.top.outerWidth / 2 + window.top.screenX - CONNECT_POPUP_WIDTH / 2,
 };
 
 const url = 'http://test.com';
@@ -58,8 +56,8 @@ describe('Connect', () => {
       onCancel: () => {},
     });
     const styles = document.getElementById(STYLES_ID);
-    expect(styles!.id).toBe(STYLES_ID);
-    expect(styles!.innerHTML).toBe(`#${IFRAME_ID} {
+    expect(styles.id).toBe(STYLES_ID);
+    expect(styles.innerHTML).toBe(`#${IFRAME_ID} {
           position: absolute;
           left: 0;
           top: 0;
