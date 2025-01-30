@@ -1,6 +1,21 @@
 # Changelog
 
-### [2.0.0](https://www.npmjs.com/package/connect-web-sdk/v/2.0.0) (Latest)
+### [2.1.0](https://www.npmjs.com/package/connect-web-sdk/v/2.1.0) (Latest)
+---
+###### Features
+- Added a new optional onUrl event handler to the ConnectEventHandlers interface. This handler allows developers to listen for URL-related events, such as opening or closing a URL. The onUrl function accepts two parameters:
+
+  - **type**: A string literal ('OPEN' or 'CLOSE') indicating the type of event.
+  - **url**: An optional string parameter that is only present when type is 'OPEN'.
+
+###### Considerations for upgrading to 2.1.0:
+- This is a non-breaking change. Existing implementations will continue to work without modification.
+- If you want to manually handle URL events in popup scenarios, you can now provide an onUrl handler in the eventHandlers object when calling Connect.launch(). 
+    If you provide an onUrl handler, you'll need to implement your own logic for opening and closing URLs, as the SDK will no longer handle these events automatically.
+    
+    Note: The default behavior for URL events remains unchanged if you don't provide an onUrl handler. The onUrl handler is optional, so you can safely ignore it if your application does not require custom URL event handling.
+
+### [2.0.0](https://www.npmjs.com/package/connect-web-sdk/v/2.0.0) (09/17/2024)
 ___
 ###### Features
 - Removed core-js and core-js-pure dependency and peer dependency from the project
