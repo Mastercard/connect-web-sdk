@@ -29,6 +29,14 @@ let targetWindow: Window;
 let connectOrigin: string;
 let popupWindow: Window | null;
 
+const PopupActionType = {
+  OPEN: 'OPEN',
+  CLOSE: 'CLOSE',
+} as const;
+
+export type PopupActionType =
+  (typeof PopupActionType)[keyof typeof PopupActionType];
+
 export interface ConnectEventHandlers {
   onDone: (event: ConnectDoneEvent) => void;
   onCancel: (event: ConnectCancelEvent) => void;
@@ -36,6 +44,7 @@ export interface ConnectEventHandlers {
   onRoute?: (event: ConnectRouteEvent) => void;
   onUser?: (event: any) => void;
   onLoad?: () => void;
+  onUrl?: (type: PopupActionType, url?: string) => void;
 }
 
 const defaultEventHandlers: any = {
@@ -259,12 +268,18 @@ export const Connect: Connect = {
       const eventType = event.data.type;
       // NOTE: make sure it's Connect and not a bad actor
       if (event.origin === connectOrigin) {
+        // NOTE: If onUrl is present in eventHandlers, then SDK won't handle (open/close) the popups.
+        // The default behavior for popups remains unchanged if an onUrl handler is not supplied.
+        const handlePopups = !!evHandlers.onUrl;
+
         // NOTE: actively pinging connect while it's displayed in a popup allows us to recover the
         // session if the user refreshes the popup window
         if (eventType === ACK_EVENT && !options.popup) {
           clearInterval(intervalId);
         } else if (eventType === URL_EVENT) {
-          this.openPopupWindow(event.data.url);
+          if (handlePopups)
+            evHandlers.onUrl(PopupActionType.OPEN, event.data.url);
+          else this.openPopupWindow(event.data.url);
         } else if (eventType === DONE_EVENT) {
           evHandlers.onDone(payload);
           this.destroy();
@@ -279,7 +294,8 @@ export const Connect: Connect = {
         } else if (eventType === USER_EVENT) {
           evHandlers.onUser && evHandlers.onUser(payload);
         } else if (eventType === CLOSE_POPUP_EVENT) {
-          popupWindow?.close();
+          if (!handlePopups) popupWindow?.close();
+          else evHandlers.onUrl(PopupActionType.CLOSE);
         }
       }
     };

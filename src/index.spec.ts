@@ -523,6 +523,82 @@ describe('Connect', () => {
       eventHandler({ origin: url, data: { type: ACK_EVENT } });
       expect(window.clearInterval).not.toHaveBeenCalled();
     });
+
+    test('should call onUrl handler when present and URL_EVENT is received', () => {
+      let eventHandler;
+      spyOn(Connect, 'openPopupWindow').and.callThrough();
+      spyOn(window, 'addEventListener').and.callFake(
+        (eventType, eh) => (eventHandler = eh)
+      );
+      const eventHandlers = {
+        onDone: jest.fn(),
+        onError: jest.fn(),
+        onCancel: jest.fn(),
+        onUrl: jest.fn(),
+      };
+      Connect.launch(url, eventHandlers);
+      Connect.initPostMessage({});
+
+      const testUrl = 'https://example.com';
+      eventHandler({
+        origin: url,
+        data: { type: URL_EVENT, url: testUrl },
+      });
+
+      expect(eventHandlers.onUrl).toHaveBeenCalledWith('OPEN', testUrl);
+      expect(Connect.openPopupWindow).not.toHaveBeenCalled();
+    });
+
+    test('should call openPopupWindow when onUrl handler is not present and URL_EVENT is received', () => {
+      let eventHandler;
+      spyOn(window, 'addEventListener').and.callFake(
+        (eventType, eh) => (eventHandler = eh)
+      );
+      const eventHandlers = {
+        onDone: jest.fn(),
+        onError: jest.fn(),
+        onCancel: jest.fn(),
+      };
+      Connect.launch(url, eventHandlers);
+      Connect.initPostMessage({});
+
+      spyOn(Connect, 'openPopupWindow');
+
+      const testUrl = 'https://example.com';
+      eventHandler({
+        origin: url,
+        data: { type: URL_EVENT, url: testUrl },
+      });
+
+      expect(Connect.openPopupWindow).toHaveBeenCalledWith(testUrl);
+    });
+
+    test('should not close popup when handlePopupsManually is true and CLOSE_POPUP_EVENT is received & onURL with Close should be called', () => {
+      let eventHandler;
+      spyOn(window, 'open').and.callFake(() => mockWindow);
+      spyOn(window, 'addEventListener').and.callFake(
+        (eventType, eh) => (eventHandler = eh)
+      );
+      const eventHandlers = {
+        onDone: jest.fn(),
+        onError: jest.fn(),
+        onCancel: jest.fn(),
+        onUrl: jest.fn(),
+      };
+      Connect.launch(url, eventHandlers, { popup: true });
+      Connect.initPostMessage({ popup: true });
+
+      const mockPopupWindow = { close: jest.fn() };
+      (Connect as any).popupWindow = mockPopupWindow;
+
+      eventHandler({
+        origin: url,
+        data: { type: CLOSE_POPUP_EVENT },
+      });
+
+      expect(mockPopupWindow.close).not.toHaveBeenCalled();
+      expect(eventHandlers.onUrl).toHaveBeenCalledWith('CLOSE');
+    });
   });
 
   describe('openPopupWindow', () => {

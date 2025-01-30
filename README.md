@@ -84,7 +84,7 @@ export class ConnectComponent {
 | onError    | Called when an error occurs while the user is using the Connect                                                                         |
 | onRoute    | Called with the user is navigating through the screens of the Connect application                                                       |
 | onUser     | Called when a user performs an action. User events provide visibility into what action a user could take within the Connect application |
-
+| onUrl      | Called when a URL event is triggered from the Connect application. If provided, the SDK will not handle URL events automatically, and clients must manage the logic themselves. If not provided, the SDK will handle URL events by default. The default SDK behavior remains unchanged if the onUrl handler isn't supplied. |
 
 ## Connect Options
 
