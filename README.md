@@ -86,6 +86,42 @@ export class ConnectComponent {
 | onUser     | Called when a user performs an action. User events provide visibility into what action a user could take within the Connect application |
 | onUrl      | Called when a URL event is triggered from the Connect application. If provided, the SDK will not handle URL events automatically, and clients must manage the logic themselves. If not provided, the SDK will handle URL events by default. The default SDK behavior remains unchanged if the onUrl handler isn't supplied. |
 
+#### Configuring your onUrl handler
+To customize how URL events are handled in your application, you can provide an onUrl handler in your Connect Event handlers. When provided, this handler gives you full control over how URLs are opened and closed, rather than relying on the SDK's default popup behavior.
+
+Here is an example of implementing a custom onUrl handler:
+```typescript
+connectEventHandlers: ConnectEventHandlers = {
+  onDone: (event: ConnectDoneEvent) => { console.log(event); },
+  onCancel: (event: ConnectCancelEvent) => { console.log(event); },
+  onError: (event: ConnectErrorEvent) => { console.log(event); },
+  onRoute: (event: ConnectRouteEvent) => { console.log(event); },
+  onUser: (event: any) => { console.log(event); },
+  onLoad: () => { console.log('loaded'); },
+  onUrl: (type, url) => {
+    if (type === 'OPEN' && url) {
+      console.log(`Opening URL: ${url}`);
+      // Custom logic to open a URL
+      window.open(url, 'targetWindow', 'width=600,height=600');
+    } else if (type === 'CLOSE') {
+      console.log('Closing popup');
+      // Custom logic to close popup
+      window.close()
+    }
+  }
+};
+
+Connect.launch(connectURL, connectEventHandlers, connectOptions);
+```
+
+- The onUrl handler accepts two parameters:
+  - `type`: A string literal that can be either 'OPEN' or 'CLOSE'
+    - 'OPEN': Indicates that a URL should be opened
+    - 'CLOSE': Indicates that a URL event should be closed
+  - `url`: An optional string parameter that is only present when type is 'OPEN'. This represents the URL to be opened.
+
+  > **Please Note**: If you provide a handler for the onUrl event, you must manage popups gracefully yourself. The Connect SDK will not handle popups for you if this handler is provided. Only provide a handler for this event if you want to diverge from the default behavior.
+
 ## Connect Options
 
 | Option | Description                                                                                                                                  |
