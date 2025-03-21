@@ -109,7 +109,7 @@ interface Connect {
     eventHandlers: ConnectEventHandlers,
     options?: ConnectOptions
   ) => Window | null | void;
-  initPostMessage: (options: ConnectOptions) => void;
+  initPostMessage: (options: ConnectOptions, eventHandlers: ConnectEventHandlers) => void;
   openPopupWindow: (url: string) => void;
   postMessage: (event: any) => void;
 }
@@ -172,7 +172,7 @@ export const Connect: Connect = {
       } else {
         targetWindow = popupWindow;
         popupWindow.focus();
-        this.initPostMessage(options);
+        this.initPostMessage(options, evHandlers);
         evHandlers.onLoad && evHandlers.onLoad();
       }
 
@@ -241,7 +241,7 @@ export const Connect: Connect = {
 
       iframe.onload = () => {
         targetWindow = iframe.contentWindow;
-        this.initPostMessage(options);
+        this.initPostMessage(options, evHandlers);
         evHandlers.onLoad && evHandlers.onLoad();
       };
 
@@ -249,7 +249,7 @@ export const Connect: Connect = {
     }
   },
 
-  initPostMessage(options: ConnectOptions) {
+  initPostMessage(options: ConnectOptions, eventHandlers: ConnectEventHandlers) {
     // NOTE: ping connect until it responds
     const intervalId = setInterval(() => {
       const data = {
@@ -257,6 +257,7 @@ export const Connect: Connect = {
         selector: options.selector,
         sdkVersion: CONNECT_SDK_VERSION,
         platform: `${options.popup ? PLATFORM_POPUP : PLATFORM_IFRAME}`,
+        attachedEventHandlers: eventHandlers && Object.keys(eventHandlers),
       };
       if (options.redirectUrl) data['redirectUrl'] = options.redirectUrl;
 
