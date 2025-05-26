@@ -2,6 +2,7 @@ import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
+import replace from '@rollup/plugin-replace';
 
 const typescriptPlugin = typescript({
   declaration: false, // Disable declaration file generation in Rollup
@@ -17,7 +18,16 @@ export default [
       format: 'esm',
       sourcemap: true,
     },
-    plugins: [resolve(), commonjs(), typescriptPlugin, terser()],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescriptPlugin,
+      terser(),
+      replace({
+        'process.env.SDK_BUILD_TYPE': JSON.stringify('ESM'),
+        preventAssignment: true,
+      }),
+    ],
   },
   // CommonJS Build
   {
@@ -27,7 +37,16 @@ export default [
       format: 'cjs',
       sourcemap: true,
     },
-    plugins: [resolve(), commonjs(), typescriptPlugin, terser()],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescriptPlugin,
+      terser(),
+      replace({
+        'process.env.SDK_BUILD_TYPE': JSON.stringify('CJS'),
+        preventAssignment: true,
+      }),
+    ],
   },
   // UMD Build
   {
@@ -39,7 +58,16 @@ export default [
       exports: 'default',
       sourcemap: true,
     },
-    plugins: [resolve(), commonjs(), typescriptPlugin, terser()],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescriptPlugin,
+      terser(),
+      replace({
+        'process.env.SDK_BUILD_TYPE': JSON.stringify('UMD'),
+        preventAssignment: true,
+      }),
+    ],
   },
   // IIFE Build for CDN
   {
@@ -51,6 +79,15 @@ export default [
       exports: 'default',
       sourcemap: true,
     },
-    plugins: [resolve(), commonjs(), typescriptPlugin, terser()],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescriptPlugin,
+      terser(),
+      replace({
+        'process.env.SDK_BUILD_TYPE': JSON.stringify('IIFE'),
+        preventAssignment: true,
+      }),
+    ],
   },
 ];

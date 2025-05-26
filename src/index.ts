@@ -18,6 +18,7 @@ import {
   CLOSE_POPUP_EVENT,
   PLATFORM_POPUP,
   PLATFORM_IFRAME,
+  CONNECT_SDK_BUILD_SOURCE,
 } from './constants';
 
 let evHandlers: ConnectEventHandlers;
@@ -109,7 +110,10 @@ interface Connect {
     eventHandlers: ConnectEventHandlers,
     options?: ConnectOptions
   ) => Window | null | void;
-  initPostMessage: (options: ConnectOptions) => void;
+  initPostMessage: (
+    options: ConnectOptions,
+    eventHandlers: ConnectEventHandlers
+  ) => void;
   openPopupWindow: (url: string) => void;
   postMessage: (event: any) => void;
 }
@@ -172,7 +176,7 @@ export const Connect: Connect = {
       } else {
         targetWindow = popupWindow;
         popupWindow.focus();
-        this.initPostMessage(options);
+        this.initPostMessage(options, evHandlers);
         evHandlers.onLoad && evHandlers.onLoad();
       }
 
@@ -241,7 +245,7 @@ export const Connect: Connect = {
 
       iframe.onload = () => {
         targetWindow = iframe.contentWindow;
-        this.initPostMessage(options);
+        this.initPostMessage(options, evHandlers);
         evHandlers.onLoad && evHandlers.onLoad();
       };
 
@@ -249,7 +253,10 @@ export const Connect: Connect = {
     }
   },
 
-  initPostMessage(options: ConnectOptions) {
+  initPostMessage(
+    options: ConnectOptions,
+    eventHandlers: ConnectEventHandlers
+  ) {
     // NOTE: ping connect until it responds
     const intervalId = setInterval(() => {
       const data = {
@@ -257,6 +264,13 @@ export const Connect: Connect = {
         selector: options.selector,
         sdkVersion: CONNECT_SDK_VERSION,
         platform: `${options.popup ? PLATFORM_POPUP : PLATFORM_IFRAME}`,
+        attachedEventHandlers: eventHandlers && Object.keys(eventHandlers),
+        overlay: options.overlay,
+        isEmbedded: !!options.selector,
+        isPopup: !!options.popup,
+        isNodeAttached: !!options.node,
+        sdkBuildSource: CONNECT_SDK_BUILD_SOURCE, // Values: [CDN/NPM] This would be set in gitlab central ci/cd job
+        sdkBuildType: process.env.SDK_BUILD_TYPE, // Values: [ESM/CJS/IIFE/UMD] This would be set in the build process. Check rollup.config.js
       };
       if (options.redirectUrl) data['redirectUrl'] = options.redirectUrl;
 

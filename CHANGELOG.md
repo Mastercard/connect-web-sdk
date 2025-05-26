@@ -1,6 +1,11 @@
 # Changelog
 
-### [2.1.0](https://www.npmjs.com/package/connect-web-sdk/v/2.1.0) (Latest)
+### [2.2.0](https://www.npmjs.com/package/connect-web-sdk/v/2.2.0) (Latest)
+---
+###### Improvements
+- Enhanced internal monitoring capabilities for better insights and reliability.
+
+### [2.1.0](https://www.npmjs.com/package/connect-web-sdk/v/2.1.0) (01/30/2025)
 ---
 ###### Features
 - Added a new optional onUrl event handler to the ConnectEventHandlers interface. This handler allows developers to listen for URL-related events, such as opening or closing a URL. The onUrl function accepts two parameters:
