@@ -1,4 +1,4 @@
-import { Connect } from './index';
+import { Connect, ConnectEventHandlers } from './index';
 
 import {
   IFRAME_ID,
@@ -31,6 +31,15 @@ const defaultPopupOptions = {
     CONNECT_POPUP_HEIGHT / 2,
   left:
     window.top!.outerWidth / 2 + window.top!.screenX - CONNECT_POPUP_WIDTH / 2,
+};
+
+const defaultEventHandlers: ConnectEventHandlers = {
+  onLoad: () => {},
+  onUser: (event) => {},
+  onRoute: (event) => {},
+  onDone: () => {},
+  onError: (event) => {},
+  onCancel: (event) => {},
 };
 
 const url = 'http://test.com';
@@ -221,23 +230,37 @@ describe('Connect', () => {
         left: 200,
       };
       const onLoad = jest.fn();
+      const userEventHandlers = {
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
+        onLoad,
+      };
+      const defaultEventHandlers = { onRoute: () => {}, onUser: () => {} };
+      const mergedEventHandlers = {
+        ...defaultEventHandlers,
+        ...userEventHandlers,
+      };
       spyOn(Connect, 'initPostMessage').and.callFake(() => {});
-      Connect.launch(
-        url,
-        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
-        { popup: true, popupOptions, redirectUrl: 'https://test.com' }
-      );
+      Connect.launch(url, mergedEventHandlers, {
+        popup: true,
+        popupOptions,
+        redirectUrl: 'https://test.com',
+      });
       expect(onLoad).toHaveBeenCalled();
       expect(window.open).toHaveBeenCalledWith(
         url,
         'targetWindow',
         `toolbar=no,location=no,status=no,menubar=no,width=${popupOptions.width},height=${popupOptions.height},top=${popupOptions.top},left=${popupOptions.left}`
       );
-      expect(Connect.initPostMessage).toHaveBeenCalledWith({
-        popup: true,
-        popupOptions,
-        redirectUrl: 'https://test.com',
-      });
+      expect(Connect.initPostMessage).toHaveBeenCalledWith(
+        {
+          popup: true,
+          popupOptions,
+          redirectUrl: 'https://test.com',
+        },
+        mergedEventHandlers
+      );
     });
 
     test('should return error event if popup failed to open', () => {
@@ -268,13 +291,19 @@ describe('Connect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
-      spyOn(Connect, 'initPostMessage').and.callFake(() => {});
-      Connect.launch(url, {
+      const userEventHandlers = {
         onDone: () => {},
         onError: () => {},
         onCancel: () => {},
         onLoad,
-      });
+      };
+      const defaultEventHandlers = { onRoute: () => {}, onUser: () => {} };
+      const mergedEventHandlers = {
+        ...defaultEventHandlers,
+        ...userEventHandlers,
+      };
+      spyOn(Connect, 'initPostMessage').and.callFake(() => {});
+      Connect.launch(url, mergedEventHandlers);
       expect(document.querySelectorAll).toHaveBeenCalledWith(
         'meta[name="viewport"]'
       );
@@ -294,7 +323,10 @@ describe('Connect', () => {
 
       expect(document.body.appendChild).toHaveBeenCalledWith(iframeStub);
       iframeStub.onload();
-      expect(Connect.initPostMessage).toHaveBeenCalledWith({});
+      expect(Connect.initPostMessage).toHaveBeenCalledWith(
+        {},
+        mergedEventHandlers
+      );
       expect(onLoad).toHaveBeenCalled();
     });
 
@@ -317,12 +349,19 @@ describe('Connect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
+      const userEventHandlers = {
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
+        onLoad,
+      };
+      const defaultEventHandlers = { onRoute: () => {}, onUser: () => {} };
+      const mergedEventHandlers = {
+        ...defaultEventHandlers,
+        ...userEventHandlers,
+      };
       spyOn(Connect, 'initPostMessage').and.callFake(() => {});
-      Connect.launch(
-        url,
-        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
-        options
-      );
+      Connect.launch(url, mergedEventHandlers, options);
 
       expect(iframeStub.setAttribute).toHaveBeenCalledWith(
         'style',
@@ -333,7 +372,10 @@ describe('Connect', () => {
       expect(mockContainer.appendChild).toHaveBeenCalledWith(iframeStub);
 
       iframeStub.onload();
-      expect(Connect.initPostMessage).toHaveBeenCalledWith(options);
+      expect(Connect.initPostMessage).toHaveBeenCalledWith(
+        options,
+        mergedEventHandlers
+      );
       expect(onLoad).toHaveBeenCalled();
     });
 
@@ -353,17 +395,28 @@ describe('Connect', () => {
         element === 'iframe' ? iframeStub : metaStub
       );
       const onLoad = jest.fn();
+      const userEventHandlers = {
+        onDone: () => {},
+        onError: () => {},
+        onCancel: () => {},
+        onLoad,
+      };
+      const defaultEventHandlers = { onRoute: () => {}, onUser: () => {} };
+      const mergedEventHandlers = {
+        ...defaultEventHandlers,
+        ...userEventHandlers,
+      };
+
       spyOn(Connect, 'initPostMessage').and.callFake(() => {});
-      Connect.launch(
-        url,
-        { onDone: () => {}, onError: () => {}, onCancel: () => {}, onLoad },
-        options
-      );
+      Connect.launch(url, mergedEventHandlers, options);
 
       expect(mockContainer.appendChild).toHaveBeenCalledWith(iframeStub);
 
       iframeStub.onload();
-      expect(Connect.initPostMessage).toHaveBeenCalledWith(options);
+      expect(Connect.initPostMessage).toHaveBeenCalledWith(
+        options,
+        mergedEventHandlers
+      );
       expect(onLoad).toHaveBeenCalled();
     });
 
@@ -425,22 +478,54 @@ describe('Connect', () => {
       spyOn(window, 'setInterval').and.callThrough();
       spyOn(Connect, 'postMessage').and.callFake(() => {});
 
-      Connect.initPostMessage({ selector: '#container' });
+      Connect.initPostMessage({ selector: '#container' }, defaultEventHandlers);
       jest.advanceTimersByTime(1100);
       expect(Connect.postMessage).toHaveBeenCalledWith({
         type: PING_EVENT,
         selector: '#container',
         sdkVersion: CONNECT_SDK_VERSION,
         platform: PLATFORM_IFRAME,
+        attachedEventHandlers: Object.keys(defaultEventHandlers),
+        isEmbedded: true,
+        isNodeAttached: false,
+        overlay: undefined,
+        isPopup: false,
+        sdkBuildSource: 'SDK_BUILD_SOURCE',
+        sdkBuildType: undefined,
       });
 
-      Connect.initPostMessage({ popup: true });
+      Connect.initPostMessage({ popup: true }, defaultEventHandlers);
       jest.advanceTimersByTime(1100);
       expect(Connect.postMessage).toHaveBeenCalledWith({
         type: PING_EVENT,
         selector: undefined,
         sdkVersion: CONNECT_SDK_VERSION,
         platform: PLATFORM_POPUP,
+        attachedEventHandlers: Object.keys(defaultEventHandlers),
+        isEmbedded: false,
+        isNodeAttached: false,
+        overlay: undefined,
+        isPopup: true,
+        sdkBuildSource: 'SDK_BUILD_SOURCE',
+        sdkBuildType: undefined,
+      });
+
+      // Should send onURL Event handler if present in eventHandlers
+      const evHandlers = { ...defaultEventHandlers, onUrl: jest.fn() };
+      Connect.initPostMessage({ selector: '#container' }, evHandlers);
+      jest.advanceTimersByTime(1100);
+      expect(Connect.postMessage).toHaveBeenCalledWith({
+        type: PING_EVENT,
+        selector: '#container',
+        sdkVersion: CONNECT_SDK_VERSION,
+        platform: PLATFORM_IFRAME,
+        attachedEventHandlers: Object.keys(evHandlers),
+        isEmbedded: true,
+        isNodeAttached: false,
+        overlay: undefined,
+        isPopup: false,
+        sdkBuildSource: 'SDK_BUILD_SOURCE',
+        sdkBuildType: undefined,
       });
     });
 
@@ -457,7 +542,7 @@ describe('Connect', () => {
         onCancel: jest.fn(),
       };
       Connect.launch(url, eventHandlers);
-      Connect.initPostMessage({ selector: '#container' });
+      Connect.initPostMessage({ selector: '#container' }, defaultEventHandlers);
 
       expect(window.addEventListener).toHaveBeenCalled();
       spyOn(window, 'clearInterval');
@@ -516,7 +601,7 @@ describe('Connect', () => {
         onCancel: jest.fn(),
       };
       Connect.launch(url, eventHandlers, { popup: true });
-      Connect.initPostMessage({ popup: true });
+      Connect.initPostMessage({ popup: true }, eventHandlers);
 
       expect(window.addEventListener).toHaveBeenCalled();
       spyOn(window, 'clearInterval');
@@ -537,7 +622,7 @@ describe('Connect', () => {
         onUrl: jest.fn(),
       };
       Connect.launch(url, eventHandlers);
-      Connect.initPostMessage({});
+      Connect.initPostMessage({}, eventHandlers);
 
       const testUrl = 'https://example.com';
       eventHandler({
@@ -560,7 +645,7 @@ describe('Connect', () => {
         onCancel: jest.fn(),
       };
       Connect.launch(url, eventHandlers);
-      Connect.initPostMessage({});
+      Connect.initPostMessage({}, eventHandlers);
 
       spyOn(Connect, 'openPopupWindow');
 
@@ -586,7 +671,7 @@ describe('Connect', () => {
         onUrl: jest.fn(),
       };
       Connect.launch(url, eventHandlers, { popup: true });
-      Connect.initPostMessage({ popup: true });
+      Connect.initPostMessage({ popup: true }, eventHandlers);
 
       const mockPopupWindow = { close: jest.fn() };
       (Connect as any).popupWindow = mockPopupWindow;
