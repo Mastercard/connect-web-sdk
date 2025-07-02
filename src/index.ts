@@ -218,20 +218,8 @@ export const Connect: Connect = {
       iframe.setAttribute('id', IFRAME_ID);
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('scrolling', 'no');
-
-      // Essential accessibility attributes
-      iframe.setAttribute('role', 'dialog');
-      iframe.setAttribute('aria-hidden', 'false');
-      iframe.setAttribute('aria-modal', 'true');
-      iframe.setAttribute(
-        'title',
-        'Link Financial Accounts Modal - Finicity, a Mastercard Company'
-      );
-      iframe.setAttribute(
-        'aria-label',
-        'Link Financial Accounts Modal - Finicity, a Mastercard Company'
-      );
-      iframe.setAttribute('tabindex', '-1');
+      iframe.setAttribute('aria-label', 'Launching Modal');
+      iframe.setAttribute('title', 'Launching Modal');
 
       // NOTE: update overlay
       if (options.overlay) {

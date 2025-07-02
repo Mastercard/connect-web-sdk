@@ -1,11 +1,6 @@
 # Changelog
 
-### [2.3.0](https://www.npmjs.com/package/connect-web-sdk/v/2.3.0) (Latest)
----
-###### Accessibility Improvements
-- Updated iframe accessibility attributes to enhance compliance and user experience.
-
-### [2.2.0](https://www.npmjs.com/package/connect-web-sdk/v/2.2.0) (05/26/2025)
+### [2.2.0](https://www.npmjs.com/package/connect-web-sdk/v/2.2.0) (Latest)
 ---
 ###### Improvements
 - Enhanced internal monitoring capabilities for better insights and reliability.
