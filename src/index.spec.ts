@@ -320,6 +320,24 @@ describe('Connect', () => {
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('id', IFRAME_ID);
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('frameborder', '0');
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('scrolling', 'no');
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith('role', 'dialog');
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'aria-hidden',
+        'false'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'aria-modal',
+        'true'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'title',
+        'Link Financial Accounts Modal - Finicity, a Mastercard Company'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'aria-label',
+        'Link Financial Accounts Modal - Finicity, a Mastercard Company'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith('tabindex', '-1');
 
       expect(document.body.appendChild).toHaveBeenCalledWith(iframeStub);
       iframeStub.onload();
