@@ -280,10 +280,12 @@ describe('Connect', () => {
       const iframeStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       const metaStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       spyOn(document.head, 'appendChild').and.callFake(() => {});
       spyOn(document.body, 'appendChild').and.callFake(() => {});
@@ -320,6 +322,24 @@ describe('Connect', () => {
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('id', IFRAME_ID);
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('frameborder', '0');
       expect(iframeStub.setAttribute).toHaveBeenCalledWith('scrolling', 'no');
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith('role', 'dialog');
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'aria-hidden',
+        'false'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'aria-modal',
+        'true'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'title',
+        'Link Financial Accounts Modal - Finicity, a Mastercard Company'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith(
+        'aria-label',
+        'Link Financial Accounts Modal - Finicity, a Mastercard Company'
+      );
+      expect(iframeStub.setAttribute).toHaveBeenCalledWith('tabindex', '-1');
 
       expect(document.body.appendChild).toHaveBeenCalledWith(iframeStub);
       iframeStub.onload();
@@ -328,6 +348,7 @@ describe('Connect', () => {
         mergedEventHandlers
       );
       expect(onLoad).toHaveBeenCalled();
+      expect(iframeStub.focus).toHaveBeenCalled();
     });
 
     test('should handle iframe scenario with custom overlay and container', () => {
@@ -338,10 +359,12 @@ describe('Connect', () => {
       const iframeStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       const metaStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       spyOn(document.head, 'appendChild').and.callFake(() => {});
       spyOn(document.body, 'appendChild').and.callFake(() => {});
@@ -385,10 +408,12 @@ describe('Connect', () => {
       const iframeStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       const metaStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       spyOn(document.head, 'appendChild').and.callFake(() => {});
       spyOn(window.document, 'createElement').and.callFake((element) =>
@@ -755,10 +780,12 @@ describe('Connect', () => {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
         contentWindow: { postMessage: jest.fn() },
+        focus: jest.fn(),
       };
       const metaStub: any = {
         parentNode: { removeChild: jest.fn() },
         setAttribute: jest.fn(),
+        focus: jest.fn(),
       };
       spyOn(document.head, 'appendChild').and.callFake(() => {});
       spyOn(document.body, 'appendChild').and.callFake(() => {});
