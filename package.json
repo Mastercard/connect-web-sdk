@@ -14,6 +14,9 @@
     "prettier-check": "prettier --check .",
     "prettier-fix": "prettier --write ."
   },
+  "publishConfig": {
+    "registry":"https://repo.fini.city/artifactory/api/npm/npm-private/"
+  },
   "exports": {
     ".": {
       "import": "./dist/mastercard-connect-esm.min.js",
